@@ -1150,3 +1150,139 @@ preprocessed/Validation/Non defective/327.jpg
 preprocessed/Validation/Non defective/328.jpg
 preprocessed/Validation/Non defective/329.jpg
 preprocessed/Validation/Non defective/330.jpg
+augmented/Train/Defective/154_augmented.jpg
+augmented/Train/Defective/157_augmented.jpg
+augmented/Train/Defective/160_augmented.jpg
+augmented/Train/Defective/170_augmented.jpg
+augmented/Train/Defective/172_augmented.jpg
+augmented/Train/Defective/186_augmented.jpg
+augmented/Train/Defective/189_augmented.jpg
+augmented/Train/Defective/193_augmented.jpg
+augmented/Train/Defective/215_augmented.jpg
+augmented/Train/Defective/219_augmented.jpg
+augmented/Train/Defective/223_augmented.jpg
+augmented/Train/Defective/226_augmented.jpg
+augmented/Train/Defective/229_augmented.jpg
+augmented/Train/Defective/235_augmented.jpg
+augmented/Train/Defective/237_augmented.jpg
+augmented/Train/Defective/240_augmented.jpg
+augmented/Train/Defective/249_augmented.jpg
+augmented/Train/Defective/251_augmented.jpg
+augmented/Train/Defective/262_augmented.jpg
+augmented/Train/Defective/265_augmented.jpg
+augmented/Train/Defective/273_augmented.jpg
+augmented/Train/Defective/277_augmented.jpg
+augmented/Train/Defective/282_augmented.jpg
+augmented/Train/Defective/293_augmented.jpg
+augmented/Train/Non defective/3_augmented.jpg
+augmented/Train/Non defective/16_augmented.jpg
+augmented/Train/Non defective/22_augmented.jpg
+augmented/Train/Non defective/27_augmented.jpg
+augmented/Train/Non defective/33_augmented.jpg
+augmented/Train/Non defective/34_augmented.jpg
+augmented/Train/Non defective/35_augmented.jpg
+augmented/Train/Non defective/50_augmented.jpg
+augmented/Train/Non defective/54_augmented.jpg
+augmented/Train/Non defective/55_augmented.jpg
+augmented/Train/Non defective/59_augmented.jpg
+augmented/Train/Non defective/60_augmented.jpg
+augmented/Train/Non defective/61_augmented.jpg
+augmented/Train/Non defective/66_augmented.jpg
+augmented/Train/Non defective/86_augmented.jpg
+augmented/Train/Non defective/88_augmented.jpg
+augmented/Train/Non defective/106_augmented.jpg
+augmented/Train/Non defective/114_augmented.jpg
+augmented/Train/Non defective/115_augmented.jpg
+augmented/Train/Non defective/118_augmented.jpg
+augmented/Train/Non defective/122_augmented.jpg
+augmented/Train/Non defective/131_augmented.jpg
+augmented/Train/Non defective/136_augmented.jpg
+augmented/Train/Non defective/140_augmented.jpg
+augmented/Train/Non defective/146_augmented.jpg
+augmented/Train/Defective/150_augmented.jpg
+augmented/Train/Defective/151_augmented.jpg
+augmented/Train/Defective/167_augmented.jpg
+augmented/Train/Defective/200_augmented.jpg
+augmented/Train/Defective/209_augmented.jpg
+augmented/Train/Defective/214_augmented.jpg
+augmented/Train/Defective/239_augmented.jpg
+augmented/Train/Defective/242_augmented.jpg
+augmented/Train/Defective/244_augmented.jpg
+augmented/Train/Defective/248_augmented.jpg
+augmented/Train/Defective/257_augmented.jpg
+augmented/Train/Defective/266_augmented.jpg
+augmented/Train/Defective/268_augmented.jpg
+augmented/Train/Defective/269_augmented.jpg
+augmented/Train/Defective/275_augmented.jpg
+augmented/Train/Defective/279_augmented.jpg
+augmented/Train/Defective/285_augmented.jpg
+augmented/Train/Defective/286_augmented.jpg
+augmented/Train/Defective/290_augmented.jpg
+augmented/Train/Defective/291_augmented.jpg
+augmented/Train/Non defective/7_augmented.jpg
+augmented/Train/Non defective/28_augmented.jpg
+augmented/Train/Non defective/40_augmented.jpg
+augmented/Train/Non defective/44_augmented.jpg
+augmented/Train/Non defective/45_augmented.jpg
+augmented/Train/Non defective/62_augmented.jpg
+augmented/Train/Non defective/65_augmented.jpg
+augmented/Train/Non defective/75_augmented.jpg
+augmented/Train/Non defective/79_augmented.jpg
+augmented/Train/Non defective/84_augmented.jpg
+augmented/Train/Non defective/92_augmented.jpg
+augmented/Train/Non defective/93_augmented.jpg
+augmented/Train/Non defective/94_augmented.jpg
+augmented/Train/Non defective/102_augmented.jpg
+augmented/Train/Non defective/105_augmented.jpg
+augmented/Train/Non defective/110_augmented.jpg
+augmented/Train/Non defective/117_augmented.jpg
+preprocessed/Train/Defective/150_augmented.jpg
+preprocessed/Train/Defective/151_augmented.jpg
+preprocessed/Train/Defective/167_augmented.jpg
+preprocessed/Train/Defective/170_augmented.jpg
+preprocessed/Train/Defective/186_augmented.jpg
+preprocessed/Train/Defective/189_augmented.jpg
+preprocessed/Train/Defective/200_augmented.jpg
+preprocessed/Train/Defective/209_augmented.jpg
+preprocessed/Train/Defective/214_augmented.jpg
+preprocessed/Train/Defective/235_augmented.jpg
+preprocessed/Train/Defective/239_augmented.jpg
+preprocessed/Train/Defective/242_augmented.jpg
+preprocessed/Train/Defective/244_augmented.jpg
+preprocessed/Train/Defective/248_augmented.jpg
+preprocessed/Train/Defective/257_augmented.jpg
+preprocessed/Train/Defective/266_augmented.jpg
+preprocessed/Train/Defective/268_augmented.jpg
+preprocessed/Train/Defective/269_augmented.jpg
+preprocessed/Train/Defective/273_augmented.jpg
+preprocessed/Train/Defective/275_augmented.jpg
+preprocessed/Train/Defective/279_augmented.jpg
+preprocessed/Train/Defective/285_augmented.jpg
+preprocessed/Train/Defective/286_augmented.jpg
+preprocessed/Train/Defective/290_augmented.jpg
+preprocessed/Train/Defective/291_augmented.jpg
+preprocessed/Train/Non defective/3_augmented.jpg
+preprocessed/Train/Non defective/7_augmented.jpg
+preprocessed/Train/Non defective/28_augmented.jpg
+preprocessed/Train/Non defective/33_augmented.jpg
+preprocessed/Train/Non defective/40_augmented.jpg
+preprocessed/Train/Non defective/44_augmented.jpg
+preprocessed/Train/Non defective/45_augmented.jpg
+preprocessed/Train/Non defective/50_augmented.jpg
+preprocessed/Train/Non defective/60_augmented.jpg
+preprocessed/Train/Non defective/62_augmented.jpg
+preprocessed/Train/Non defective/65_augmented.jpg
+preprocessed/Train/Non defective/75_augmented.jpg
+preprocessed/Train/Non defective/79_augmented.jpg
+preprocessed/Train/Non defective/84_augmented.jpg
+preprocessed/Train/Non defective/92_augmented.jpg
+preprocessed/Train/Non defective/93_augmented.jpg
+preprocessed/Train/Non defective/94_augmented.jpg
+preprocessed/Train/Non defective/102_augmented.jpg
+preprocessed/Train/Non defective/105_augmented.jpg
+preprocessed/Train/Non defective/110_augmented.jpg
+preprocessed/Train/Non defective/114_augmented.jpg
+preprocessed/Train/Non defective/117_augmented.jpg
+preprocessed/Train/Non defective/118_augmented.jpg
+preprocessed/Train/Non defective/131_augmented.jpg
+preprocessed/Train/Non defective/140_augmented.jpg
