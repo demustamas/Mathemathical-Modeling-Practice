@@ -1,0 +1,106 @@
+\documentclass[10pt, final]{article}
+
+% Set up page layout
+\usepackage[a4paper, margin=1in]{geometry}
+% \usepackage{indentfirst}
+
+% Language support
+\usepackage{t1enc}
+\usepackage[english]{babel}
+
+% Bibliography, refs, citations
+\usepackage[sorting=none, backend=biber, style=numeric]{biblatex}
+\addbibresource{mmp.bib}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+}
+
+% Itemize with letters
+\usepackage{enumitem}
+
+% Special math representation (matrix, etc.)
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+% Software code
+\usepackage{listings}
+
+% Graphics
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.12}
+\usepackage{forest}
+
+% Development tools - only if draft set in the documentclass options
+\usepackage{ifdraft}
+\ifdraft {\usepackage{showframe}}
+
+
+\title{Railway Track Fault Detection\\\large Mathemathical Modeling Practice\\}
+\author{Tamás DEMUS\\XP4B9D}
+\date{Fall Semester 2022}
+
+\begin{document}
+	\maketitle
+	\tableofcontents
+	\section{Introduction}
+	Analyzing images and processing the information stored within 
+	is a key field of machine learning.
+	Classification of different images, identifying and localizing 
+	different objects are basic problems.
+	Several real-life cases prove the usability of such approach 
+	such as traffic sign recognition, object detection or face recognition.
+	The target of current research is to endeavour to create an algorithm
+	that is able to classify images taken from parts of the rail track
+	 to classify whether the rail is defect or not.
+	\section{Dataset description}
+	The dataset used for this study is taken from Kaggle webpage \cite*{noauthor_kaggle_nodate}
+	and can be downloaded directly from 
+	\url{https://www.kaggle.com/datasets/salmaneunus/railway-track-fault-detection}
+	\cite*{noauthor_railway_nodate}.
+	The dataset is stored in different directories related to their purpose: Train, Validation,
+	or Test dataset.
+	Inside each directory the classes also splitted to separate directories: Defective or Non defective.
+	The directory structure along with the number of images can be seen in Table \ref{table:dir_struct}
+	\begin{table}[!h]
+		\centering
+		\begin{tabular}{l c}
+			Folder & Number of images \\
+			\hline
+			./Train/Defective & 150 \\
+			./Train/Non defective & 150 \\
+			./Validation/Defective & 31 \\
+			./Validation/Non defective & 31 \\
+			./Test/Defective & 11 \\
+			./Test/Non defective & 11 \\
+			\hline
+		\end{tabular}
+		\caption{Dataset directory structure}
+		\label{table:dir_struct}
+	\end{table}
+	The images are taken from different perspectives (side, top), from different distances (close, distant)
+	and from different parts (single rail, complete rail track, etc.) of the railway track. 
+	Some examples are shown in Figure \ref{fig:track_example}.
+	\begin{figure}[!h]
+		
+
+		\caption{Example images of the track}
+		\label{fig:track_example}
+	\end{figure}
+
+	\section{Problem statement}
+	\section{Methodology}
+	\subsection{Data exploration}
+	\subsection{Image processing}
+	\subsection{Neural network}
+	\section{Results}
+	\subsection{Data exploration}
+	\subsection{Image processing}
+	\subsection{Neural network}
+	\section{Conclusion}
+	\listoffigures
+	\listoftables
+	\printbibliography
+\end{document}
