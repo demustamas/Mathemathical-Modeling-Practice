@@ -65,6 +65,21 @@
 		that is able to classify images taken from parts of the rail track
 		to classify whether the rail is defect or not.
 
+		\citeauthor{li_component-based_2011} presents a methodology \cite*{li_component-based_2011} 
+		in his work in \citedate{li_component-based_2011}
+		to detect missing rail components focusing on the tie plate and it's surrounding.
+		A fixed position camera is used in the research that allows a steady assessment of the track components.
+		Mostly relying on edge detection mehtods on grayscale images, 
+		at first detecting the tie plate itself and then the other components can be identified 
+		based on the geometrical positioning.
+
+		In his study \citeauthor{kumar_m_survey_2018} in \citedate{kumar_m_survey_2018} compares crack detection 
+		methods that are based on different measurement solutions and image processing algorithms.
+		The preprocessing steps are explained in detail.
+		He refers to conversion grayscale images as main apprach.
+		Noise reduction and the sharpening of the picture is taken as first step.
+		For further evaluation he refers to several edge detection techinques that might be applied.
+
 		In Section \ref{sec:data_desc} the dataset is introduced without any detailed analysis
 		to give a first glance where the study is started. 
 		Section \ref{sec:prob_stat} the main research questions stated. 
@@ -250,7 +265,7 @@
 				\item Rail cracks. (Figure \ref{fig:def_cracked})
 				\item Disjoint rail connections. (Figure \ref{fig:def_disjoint})
 				\item Pitting of the rail surface. (Figure \ref{fig:def_pitting})
-				\item Improper fixation of the rail. (Figure \ref{fig:def_nofix})
+				\item Defect fastener. (Figure \ref{fig:def_nofix})
 				\item Missing elements, e.g.: screws, springs. (Figure \ref{fig:def_missing})
 			\end{enumerate}
 			\begin{figure}[!ht]
@@ -276,7 +291,7 @@
 				\begin{subfigure}{0.3\textwidth}
 					\centering
 					\includegraphics[width=\textwidth]{./data/Train/Defective/202.jpg}
-					\caption{Wrong fixation}
+					\caption{Fastener defect}
 					\label{fig:def_nofix}
 				\end{subfigure}
 				\begin{subfigure}{0.3\textwidth}

@@ -1664,3 +1664,6 @@ build/Demus_Tamas_XP4B9D_mmp.out
 build/Demus_Tamas_XP4B9D_mmp.run.xml
 build/Demus_Tamas_XP4B9D_mmp.synctex.gz
 build/Demus_Tamas_XP4B9D_mmp.toc
+__pycache__/classes.cpython-39.pyc
+__pycache__/environment.cpython-39.pyc
+__pycache__/init.cpython-39.pyc
