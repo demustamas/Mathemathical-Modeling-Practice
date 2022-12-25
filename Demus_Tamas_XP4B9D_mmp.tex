@@ -65,7 +65,85 @@
 		that is able to classify images taken from parts of the rail track
 		to classify whether the rail is defect or not.
 
-		\citeauthor{li_component-based_2011} presents a methodology \cite*{li_component-based_2011} 
+		A comprehensive overview about visual inspection technologies used in the railway sector is given
+		in \cite{liu_review_2019}.
+		It focuses on different technologies including machine learning and non machine learning applications
+		and covers the overall railway sector including track, vehicle and infrastructure elements.
+		The following major application categories identified: the railway track, the pantograph-catenary
+		subsytem, the train body and rail infrastructure.
+		The railway track is discussed in several subpoints: the detection of rail surface defects, wear and
+		deformation of track components, identification of rail components and the detection and extraction  of rails.
+		Current summary follows this review focusing on the track inspection methods applying machine learning
+		algorithms.
+
+		\citeauthor{xue_wang_machine-vision_2008} presents a rail surface defect detection method \cite{xue_wang_machine-vision_2008}
+		based on a liner CCD followed by image processing and applying a QNN network.
+		The accuracy results were evaluated and compared between QNN, ANN and SVM.
+		First it detects region of interests (ROI) in the captured images by selecting pixels where the gray-level
+		quantity is above a certain threshold.
+		Then it searches for edges to identify the pixels that belong to certain edges.
+		Then comparing this two set of points, a region of interest is defined by the presence of a set of pixels
+		in both sets.
+		Once this are marked, a rectangle can be drawn to enclose the region.
+		Next step if to extract the features from the single ROIs.
+		The features are defined based on the geometry of the flaw inside the ROI, the grey-level of the flaw pixels,
+		and a so-called tansform-space, where a discrete cosine transform filter is applied.
+		The obtained recalls are ranging between 86.7\% and 100\% depending on the type of flaw.
+
+		Deep convolutional neural network (DCNN) was proposed in \cite{faghih-roohi_deep_2016} to detect surface defects of rails.
+		Video recordings of rail tracks are processed by DCNNs with different sizes related to the size and number
+		of the filters, number of convolutional layers and the size of the fully connected layers.
+		Hyperbolic tangent and ReLU activation functions used.
+		The applied dataset consits of more than 22.000 manually labelled images of 6 classes 
+		(normal surface, weld, light, moderate or severe squat and joint defects).
+		Input image size is 100x50 pixels and converted to grayscale.
+		The multi class accuracy is ranging between 91.17\% and 92.47\%.
+		The performance increases by increasing the size of the DCNN and by applying ReLU activation functions.
+
+		Another solution for rail surface defect detection is described in \cite{ma_texture_2016}.
+		Images taken by maintenance vehicles from the top and evaluated for surface defects via two SVM classifiers
+		applied one after the another.
+		Overall 8 defect categories differentiated including the non-defect case.
+		939 manually annotated images was used for the experiments.
+		A Random Forest based edge detection is followed by a Generalized Hough transform to detect the position of the rails.
+		This overperformed the Canny edge detection method.
+		Defect severity level classification was traced back to a texture classification task for that a Bag of Words model
+		is used.
+		A set of filters are used to create the feature vectors for each pixel in each image.
+		From this the dictionary is created via a k-means clustering resulting in a histogram of k bins containing the number
+		of pixels in each bin.
+		These descriptors were fed for a $\chi^2$-kernel SVM for training.
+		Besdies the dictionary texton forests were built.
+		Instead of predicting the class, texton forests predict the image descriptors.
+		The two methods were combined to an ensemble method by applying stacking.
+		Overall 5 texton forest SVM classifier and 4 texton dictionary SVM classifier provides 9 probability vector with
+		8 elements for the 8 classes.
+		A second level linear-kernel SVM was fitted to these outputs.
+		An accuracy of 82\% is achieved in the end.
+
+		\citeauthor{santur_new_2017} presents a laser based imaging technology combined with deep learning model \cite{santur_new_2017}.
+		The rail profile is aquired via laser scanning and afterwards a convolutional neural network is applied.
+		The article distinguishes between 4 defects: cracks, abrasion, corrugation and headchecks, however only binary classification
+		is implemented (faulty or not faulty image).
+		The rail imaging is done via stereovision, time of flight and laser triangulation to obtain a 3d image.
+		The mentioned system achieved 98\% accuracy.
+
+		\citeauthor{li_cyber-enabled_2018} introduces a corrugation identification system that consists of an image
+		acquisition system and the corresponding machine learning algorithm \cite{li_cyber-enabled_2018}.
+		The images are taken from the top by equipment fitted to the underframe of the vehicle.
+		The image processing covers the localization of the rail, feature extraction and corrugation recognition steps.
+		Rail localization is done on the observation that the rail brightness is high and even and mostly located on the
+		center of the picture.
+		Features extracted by applying Fourier transformation for each column (lengthwise part of the rail surface) to 
+		determine the Fourier energy spectrum after truncation and sampling to reduce the dimensionality.
+		Observation taken that the longitudinal average gray value is relatively high and distributed uniformly.
+		Corrugation lines represented as periodic changes of the gray value that is a sparse energy distribution
+		in the frequency domain.
+		Corrugation afterwards can be detected by an SVM trained on these features.
+		The proposed solution reaches 99\% accuracy.
+		
+
+		\citeauthor{li_component-based_2011} presents a methodology \cite{li_component-based_2011} 
 		in his work in \citedate{li_component-based_2011}
 		to detect missing rail components focusing on the tie plate and it's surrounding.
 		A fixed position camera is used in the research that allows a steady assessment of the track components.
@@ -91,7 +169,7 @@
 		hopefully leading to positive outcomes.
 		Finally Section \ref{sec:conclusion} concludes in the overall achievements.
 	\section{Dataset description} \label{sec:data_desc}
-		The dataset used for this study is taken from Kaggle webpage \cite*{noauthor_kaggle_nodate}
+		The dataset used for this study is taken from Kaggle webpage \cite{noauthor_kaggle_nodate}
 		and can be downloaded directly from 
 		\url{https://www.kaggle.com/datasets/salmaneunus/railway-track-fault-detection}
 		\cite*{noauthor_railway_nodate}.
@@ -243,7 +321,7 @@
 			All images have 3 color components according to RGB color model.
 			\begin{figure}[!ht]
 				\centering
-				\includegraphics[width=\textwidth]{./plots/shapes.png}
+				\includegraphics[width=\textwidth]{./tex_graphs/shapes.png}
 				\caption{Distribution of the image shapes}
 				\label{fig:shape_dist}
 			\end{figure}
@@ -252,7 +330,7 @@
 			Figure \ref{fig:comp_pair}.
 			\begin{figure}[!ht]
 				\centering
-				\includegraphics[width=\textwidth]{./plots/comp_pair.png}
+				\includegraphics[width=\textwidth]{./tex_graphs/comp_pair.png}
 				\caption{Color component pair analysis}
 				\label{fig:comp_pair}
 			\end{figure}
@@ -314,7 +392,7 @@
 			An example of the analysis is shown on Figure \ref{fig:color_analysis}.
 			\begin{figure}[!ht]
 				\centering
-				\includegraphics[width=\textwidth]{./plots/comp_analysis_1.png}
+				\includegraphics[width=\textwidth]{./tex_graphs/comp_analysis_1.png}
 				\caption{Color component analysis on RGB and HSV color modes}
 				\label{fig:color_analysis}
 			\end{figure}
