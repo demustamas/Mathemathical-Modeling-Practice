@@ -226,6 +226,7 @@
 			In Section \ref{sec:discussion} the results are reflected to the research questions, 
 			hopefully leading to positive outcomes.
 			Finally Section \ref{sec:conclusion} concludes in the overall achievements.
+
 	\section{Dataset description} \label{sec:data_desc}
 		The dataset used for this study is taken from Kaggle webpage \cite{noauthor_kaggle_nodate}
 		and can be downloaded directly from 
@@ -300,6 +301,7 @@
 			\caption{Example images of defective track}
 			\label{fig:track_def}
 		\end{figure}
+	
 	\section{Problem statement} \label{sec:prob_stat}
 		The algorithm targets to identify from a picture whether it represents a defective or a non defective 
 		track section.
@@ -312,6 +314,7 @@
 				and machine learning approach? 
 			\item \label{itm:Q3} What accuracy rate can be achieved with the algorithm?
 		\end{enumerate}
+	
 	\section{Methodology} \label{sec:method}
 		The research can be divided to several major steps, these are described in the subsequent sections.
 		The algorithm is developed in Python programming language in a form of a Jupyter notebook.
@@ -326,6 +329,7 @@
 			\item \lstinline{preprocessed} The data after image processing, preprocessed for the machine learning
 				algorithm. Includes both the original and augmented dataset.
 		\end{enumerate}
+		
 		\subsection{Data cleaning}
 			The images should be brought to the same quality in order to efficiently process them.
 			This covers the identification of corrupted files, correct the wrong file formats 
@@ -337,6 +341,7 @@
 				\item Indicator of defective or non-defective class, both as integer and as string.
 				\item Path of the image directory, filename and their joints as full path.
 			\end{enumerate}
+		
 		\subsection{Data exploration}
 			The target of this step is to get a deep understanding of the pictures contentwise.
 			The main properties, such as size, color composition, orientation, what is shown and similar need to be 
@@ -354,6 +359,7 @@
 		% \subsection{Neural network configuration}
 		% \subsection{Prediction of test data}
 		% \subsection{Metrics and evaluation}
+	
 	\section{Results} \label{sec:results}
 		\subsection{Data cleaning}			
 			The raw data from the Kaggle webpage \cite{noauthor_railway_nodate} is copied to the folder \lstinline{raw}.
@@ -368,6 +374,7 @@
 			The modified dataset is then stored in the \lstinline{data} folder in the same structure as in the original data.
 			
 			Second step is to sum all the main information of each image in a single Python DataFrame to allow easy processing.
+		
 		\subsection{Data exploration}
 			The distribution of the image sizes are shown in Figure \ref{fig:shape_dist}. 
 			Please note that higher detail images can be found in the corresponding Jupyter notebook, the aim in this document
