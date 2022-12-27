@@ -74,100 +74,158 @@
 		The railway track is discussed in several subpoints: the detection of rail surface defects, wear and
 		deformation of track components, identification of rail components and the detection and extraction  of rails.
 		Current summary follows this review focusing on the track inspection methods applying machine learning
-		algorithms.
+		algorithms based on image processing.
 
-		\citeauthor{xue_wang_machine-vision_2008} presents a rail surface defect detection method \cite{xue_wang_machine-vision_2008}
-		based on a liner CCD followed by image processing and applying a QNN network.
-		The accuracy results were evaluated and compared between QNN, ANN and SVM.
-		First it detects region of interests (ROI) in the captured images by selecting pixels where the gray-level
-		quantity is above a certain threshold.
-		Then it searches for edges to identify the pixels that belong to certain edges.
-		Then comparing this two set of points, a region of interest is defined by the presence of a set of pixels
-		in both sets.
-		Once this are marked, a rectangle can be drawn to enclose the region.
-		Next step if to extract the features from the single ROIs.
-		The features are defined based on the geometry of the flaw inside the ROI, the grey-level of the flaw pixels,
-		and a so-called tansform-space, where a discrete cosine transform filter is applied.
-		The obtained recalls are ranging between 86.7\% and 100\% depending on the type of flaw.
+		\subsection{Surface defect detection}
+			\citeauthor*{xue_wang_machine-vision_2008} presents a rail surface defect detection method \cite{xue_wang_machine-vision_2008}
+			based on a liner CCD followed by image processing and applying a Quantum Neural Network (QNN).
+			The accuracy results were evaluated and compared between QNN, Artifical Neural Network (ANN) 
+			and Support Vector Machine (SVM).
+			First it detects region of interests (ROI) in the captured images by selecting pixels where the gray-level
+			quantity is above a certain threshold.
+			Then it searches for edges to identify the pixels that belong to certain edges.
+			Then comparing this two set of points, a region of interest is defined by the presence of a set of pixels
+			in both sets.
+			Once this are marked, a rectangle can be drawn to enclose the region.
+			Next step if to extract the features from the single ROIs.
+			The features are defined based on the geometry of the flaw inside the ROI, the grey-level of the flaw pixels,
+			and a so-called tansform-space, where a discrete cosine transform filter is applied.
+			The obtained recalls are ranging between 86.7\% and 100\% depending on the type of flaw.
 
-		Deep convolutional neural network (DCNN) was proposed in \cite{faghih-roohi_deep_2016} to detect surface defects of rails.
-		Video recordings of rail tracks are processed by DCNNs with different sizes related to the size and number
-		of the filters, number of convolutional layers and the size of the fully connected layers.
-		Hyperbolic tangent and ReLU activation functions used.
-		The applied dataset consits of more than 22.000 manually labelled images of 6 classes 
-		(normal surface, weld, light, moderate or severe squat and joint defects).
-		Input image size is 100x50 pixels and converted to grayscale.
-		The multi class accuracy is ranging between 91.17\% and 92.47\%.
-		The performance increases by increasing the size of the DCNN and by applying ReLU activation functions.
+			Deep convolutional neural network (DCNN) was proposed in \cite{faghih-roohi_deep_2016} to detect surface defects of rails.
+			Video recordings of rail tracks are processed by DCNNs with different sizes related to the size and number
+			of the filters, number of convolutional layers and the size of the fully connected layers.
+			Hyperbolic tangent and ReLU activation functions used.
+			The applied dataset consits of more than 22.000 manually labelled images of 6 classes 
+			(normal surface, weld, light, moderate or severe squat and joint defects).
+			Input image size is 100x50 pixels and converted to grayscale.
+			The multi class accuracy is ranging between 91.17\% and 92.47\%.
+			The performance increases by increasing the size of the DCNN and by applying ReLU activation functions.
 
-		Another solution for rail surface defect detection is described in \cite{ma_texture_2016}.
-		Images taken by maintenance vehicles from the top and evaluated for surface defects via two SVM classifiers
-		applied one after the another.
-		Overall 8 defect categories differentiated including the non-defect case.
-		939 manually annotated images was used for the experiments.
-		A Random Forest based edge detection is followed by a Generalized Hough transform to detect the position of the rails.
-		This overperformed the Canny edge detection method.
-		Defect severity level classification was traced back to a texture classification task for that a Bag of Words model
-		is used.
-		A set of filters are used to create the feature vectors for each pixel in each image.
-		From this the dictionary is created via a k-means clustering resulting in a histogram of k bins containing the number
-		of pixels in each bin.
-		These descriptors were fed for a $\chi^2$-kernel SVM for training.
-		Besdies the dictionary texton forests were built.
-		Instead of predicting the class, texton forests predict the image descriptors.
-		The two methods were combined to an ensemble method by applying stacking.
-		Overall 5 texton forest SVM classifier and 4 texton dictionary SVM classifier provides 9 probability vector with
-		8 elements for the 8 classes.
-		A second level linear-kernel SVM was fitted to these outputs.
-		An accuracy of 82\% is achieved in the end.
+			Another solution for rail surface defect detection is described in \cite{ma_texture_2016}.
+			Images taken by maintenance vehicles from the top and evaluated for surface defects via two SVM classifiers
+			applied one after the another.
+			Overall 8 defect categories differentiated including the non-defect case.
+			939 manually annotated images was used for the experiments.
+			A Random Forest based edge detection is followed by a Generalized Hough transform to detect the position of the rails.
+			This overperformed the Canny edge detection method.
+			Defect severity level classification was traced back to a texture classification task for that a Bag of Words model
+			is used.
+			A set of filters are used to create the feature vectors for each pixel in each image.
+			From this the dictionary is created via a k-means clustering resulting in a histogram of k bins containing the number
+			of pixels in each bin.
+			These descriptors were fed for a $\chi^2$-kernel SVM for training.
+			Besides the dictionary texton forests were built.
+			Instead of predicting the class, texton forests predict the image descriptors.
+			The two methods were combined to an ensemble method by applying stacking.
+			Overall 5 texton forest SVM classifier and 4 texton dictionary SVM classifier provides 9 probability vector with
+			8 elements for the 8 classes.
+			A second level linear-kernel SVM was fitted to these outputs.
+			An accuracy of 82\% is achieved in the end.
 
-		\citeauthor{santur_new_2017} presents a laser based imaging technology combined with deep learning model \cite{santur_new_2017}.
-		The rail profile is aquired via laser scanning and afterwards a convolutional neural network is applied.
-		The article distinguishes between 4 defects: cracks, abrasion, corrugation and headchecks, however only binary classification
-		is implemented (faulty or not faulty image).
-		The rail imaging is done via stereovision, time of flight and laser triangulation to obtain a 3d image.
-		The mentioned system achieved 98\% accuracy.
+			\citeauthor*{santur_new_2017} presents a laser based imaging technology combined with deep learning model \cite{santur_new_2017}.
+			The rail profile is aquired via laser scanning and afterwards a convolutional neural network is applied.
+			The article distinguishes between 4 defects: cracks, abrasion, corrugation and headchecks, 
+			however only binary classification is implemented (faulty or not faulty image).
+			The rail imaging is done via stereovision, time of flight and laser triangulation to obtain a 3d image.
+			Convolutional Neural Network (CNN) was applied on the image.
+			The mentioned system achieved 98\% accuracy.
 
-		\citeauthor{li_cyber-enabled_2018} introduces a corrugation identification system that consists of an image
-		acquisition system and the corresponding machine learning algorithm \cite{li_cyber-enabled_2018}.
-		The images are taken from the top by equipment fitted to the underframe of the vehicle.
-		The image processing covers the localization of the rail, feature extraction and corrugation recognition steps.
-		Rail localization is done on the observation that the rail brightness is high and even and mostly located on the
-		center of the picture.
-		Features extracted by applying Fourier transformation for each column (lengthwise part of the rail surface) to 
-		determine the Fourier energy spectrum after truncation and sampling to reduce the dimensionality.
-		Observation taken that the longitudinal average gray value is relatively high and distributed uniformly.
-		Corrugation lines represented as periodic changes of the gray value that is a sparse energy distribution
-		in the frequency domain.
-		Corrugation afterwards can be detected by an SVM trained on these features.
-		The proposed solution reaches 99\% accuracy.
-		
+			\citeauthor*{li_cyber-enabled_2018} introduces a corrugation identification system that consists of an image
+			acquisition system and the corresponding machine learning algorithm \cite{li_cyber-enabled_2018}.
+			The images are taken from the top by equipment fitted to the underframe of the vehicle.
+			The image processing covers the localization of the rail, feature extraction and corrugation recognition steps.
+			Rail localization is done on the observation that the rail brightness is high and even and mostly located on the
+			center of the picture.
+			Features extracted by applying Fourier transformation for each column (lengthwise part of the rail surface) to 
+			determine the Fourier energy spectrum after truncation and sampling to reduce the dimensionality.
+			Observation taken that the longitudinal average gray value is relatively high and distributed uniformly.
+			Corrugation lines represented as periodic changes of the gray value that is a sparse energy distribution
+			in the frequency domain.
+			Corrugation afterwards can be detected by an SVM trained on these features.
+			The proposed solution reaches 99\% accuracy.
+			
+			Another model is described in \cite{shang_detection_2018} for surface defect detection.
+			A CNN is applied after preprocessing of the images.
+			Canny edge detection is applied to the grayscaled images, that is followed by removing the false edge points.
+			The point removal is based on the dynamic range of the edgepoints that is adaptively narrowed to obtain
+			a set of points with low standard deviation.
+			Once the false points removed, linear fitting performed to obtain the coefficients of the rail edge linears.
+			Inception-v3 CNN was applied with transfer learning.
+			More than 5000 images were used for the training, more than 2000 for the validation and around 1500 for the final test.
+			The image size for the CNN is 960x1280 pixels.
+			The model results in 92.54\% recall rate and 92.08\% precision.
 
-		\citeauthor{li_component-based_2011} presents a methodology \cite{li_component-based_2011} 
-		in his work in \citedate{li_component-based_2011}
-		to detect missing rail components focusing on the tie plate and it's surrounding.
-		A fixed position camera is used in the research that allows a steady assessment of the track components.
-		Mostly relying on edge detection mehtods on grayscale images, 
-		at first detecting the tie plate itself and then the other components can be identified 
-		based on the geometrical positioning.
+		\subsection{Component detection}
+			\citeauthor{li_component-based_2011} presents a methodology in his work in \cite{li_component-based_2011} 
+			extended in \cite{trinh_enhanced_2012} and \cite{ying_li_rail_2014} to detect missing rail components 
+			focusing on the tie plate and it's surrounding localization.
+			A fixed position camera is used in the research that allows a steady assessment of the track components.
+			Mostly relying on edge detection methods on grayscale images, 
+			at first detecting the tie plate itself and then the other components can be identified 
+			based on the geometrical positioning.
 
-		In his study \citeauthor{kumar_m_survey_2018} in \citedate{kumar_m_survey_2018} compares crack detection 
-		methods that are based on different measurement solutions and image processing algorithms.
-		The preprocessing steps are explained in detail.
-		He refers to conversion grayscale images as main apprach.
-		Noise reduction and the sharpening of the picture is taken as first step.
-		For further evaluation he refers to several edge detection techinques that might be applied.
+			Connection element binary classification is presented in \cite{mazzeo_visual_2004} that is explained more
+			in detail in \cite{marino_real-time_2007}. 
+			The method is able to detect the presence of fastener bolts or hooks.
+			Fastening elements are extracted as features from grayscale pictures taken from top view.
+			Wavelet transformation and principal component analysis (PCA) performed to describe the features
+			in low dimensionality.
+			During the wavelet transformation a high-pass and low-pass filter is applied in every combination,
+			extended by applying the same combinations on the low-pass-low-pass result.
+			This results in a multilevel (depending on the number of extensions) wavelet transform.
+			Two type of neural networks considered: Multilayer Perceptron and Radial Basis Function.
+			A training set of 173 images used for the bolt detection and 221 images for the hook detection.
+			Depending on the object to detect the wavelet transformation with levels of 3, 4, and 5 performed best,
+			reaching accuracy rates of above 98\% in almost all cases.
 
-		In Section \ref{sec:data_desc} the dataset is introduced without any detailed analysis
-		to give a first glance where the study is started. 
-		Section \ref{sec:prob_stat} the main research questions stated. 
-		Following in Section \ref{sec:method} a detailed dexription of the applied methodology
-		and toolkits introduced.
-		Section \ref{sec:results} presents the results of the study divided according to 
-		the main steps of the algorithm.
-		In Section \ref{sec:discussion} the results are reflected to the research questions, 
-		hopefully leading to positive outcomes.
-		Finally Section \ref{sec:conclusion} concludes in the overall achievements.
+			A commercial solution is presented in \cite{de_ruvo_gpu-based_2009} utilizing GPU based hardware.
+			It consists of an integrated image acquisition system followed by a prediction modul to identify image areas 
+			for classification and a bolt detection module.
+			The bolt detection module uses Multilayer Perceptual Network Classifiers (MLPNC) fed by features generated 
+			through wavelet transformation.
+			Training dataset consists of approx. 1000 images of 24x100 pixels window, that are extracted from recorded
+			videos.
+			The MLPNCs have a structure of 150:10:1 layers.
+			The results of different MLPNCs combined with and AND operator.
+			The prediction and detection modules are built on a GPU based hardware for fast execution.
+			An accuracy rate of 99.9\%, 0.1\% and 95\% was reached for visible, occluded and absent bolts
+			respectively.
+
+			Another component detection is introduced in \cite{khan_automatic_2014}.
+			Top view rail images used for detecting the fastening elements taken by the image acquisition system
+			taken in a way to minimise surroundings of the ROIs.
+			The alogrithm applies preprocessing, grayscale conversion, feature point detection, feature extraction 
+			and feature matching to detect rail anchors.
+			The images are resized to 200x200 and then cropped to 170x67 to minimise the noise caused by the surroundings.
+			Harris-Stephen and Shi-Tomasi feature detectors were applied.
+			The features of the train and test images were matched.
+			If the number of matchings is above a certain threshold, than presence of a rail anchor is assumed.
+			The method achieved an average success rate of 83.55\%.
+
+		\subsection{Further detection methods}
+			In his study \citeauthor{kumar_m_survey_2018} compares crack detection methods that are based on different 
+			measurement solutions and image processing algorithms \cite{kumar_m_survey_2018}.
+			The preprocessing steps are explained in detail.
+			They refer to conversion grayscale images as main apprach.
+			Noise reduction and the sharpening of the picture is taken as first step.
+			For further evaluation he refers to several edge detection techinques that might be applied.
+
+		\subsection{Summary}
+			no joint method, different preprocessing: grayscale, edge detection, rail position, or special feature extraction
+			(bag of words, wavelet transform, etc.), image size vary, training sets vary
+			Common: known shape, geometrical position and camera position, grayscale
+
+			In Section \ref{sec:data_desc} the dataset is introduced without any detailed analysis
+			to give a first glance where the study is started. 
+			Section \ref{sec:prob_stat} the main research questions stated. 
+			Following in Section \ref{sec:method} a detailed dexription of the applied methodology
+			and toolkits introduced.
+			Section \ref{sec:results} presents the results of the study divided according to 
+			the main steps of the algorithm.
+			In Section \ref{sec:discussion} the results are reflected to the research questions, 
+			hopefully leading to positive outcomes.
+			Finally Section \ref{sec:conclusion} concludes in the overall achievements.
 	\section{Dataset description} \label{sec:data_desc}
 		The dataset used for this study is taken from Kaggle webpage \cite{noauthor_kaggle_nodate}
 		and can be downloaded directly from 
