@@ -1,10 +1,12 @@
-# Mathemathical-Modeling-Practice
+# Mathemathical Modeling Practice - Railway track defect detection
 
 This project is intended as the project work for the class Mathemathical Modeling Practice under the specialization program of AI Research Group of Eötvös Lóránd University.
 
 https://ai.elte.hu/training/
 
-The target of the project is to work out a classification tool for the selected dataset that can be found in the Kaggle webpage.
+The target of the project is to work out a classification tool for detecting railway track defects.
+
+The selected dataset that can be found in the Kaggle webpage.
 
 https://www.kaggle.com/datasets/salmaneunus/railway-track-fault-detection
 
