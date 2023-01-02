@@ -9,10 +9,10 @@ https://www.kaggle.com/datasets/salmaneunus/railway-track-fault-detection
 ## Quickstart
 
 The data is stored in different stages of the processing in the following folders:
-- `raw`: Raw dataset copied from Kaggle
-- `data`: Cleaned dataset in standardized format
-- `augmented`: Dataset of augmented images
-- `preprocessed`: Images preprocessed for feeding into the neural network
+- `./raw/`: Raw dataset copied from Kaggle
+- `./data/`: Cleaned dataset in standardized format (created by the scriptfiles)
+- `./augmented/`: Dataset of augmented images (created by the scriptfiles)
+- `./preprocessed/`: Images preprocessed for feeding into the neural network (created by the scriptfiles)
 
 The code structure is as follows:
 - `./toolkit/classes.py`: Stores the class definitions
@@ -22,5 +22,9 @@ The code structure is as follows:
 - `./playground.ipynb`: Contains the scripts under development or trial
 
 The progress and results are documented in the `documentation.tex` file, a pdf format can be found in `./build/`
+The corresponding folders and files:
+- `./plots/`: To store the images inserted into the LaTeX file
+- `./build/`: Temporary build directory for the LaTeX file, contains the pdf as default
+- `./documentation.bib`: Bibliography
 
 ## The project is still in work.
