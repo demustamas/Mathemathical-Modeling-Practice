@@ -1,9 +1,11 @@
 # Mathemathical-Modeling-Practice
 
 This project is intended as the project work for the class Mathemathical Modeling Practice under the specialization program of AI Research Group of Eötvös Lóránd University.
+
 https://ai.elte.hu/training/
 
 The target of the project is to work out a classification tool for the selected dataset that can be found in the Kaggle webpage.
+
 https://www.kaggle.com/datasets/salmaneunus/railway-track-fault-detection
 
 ## Quickstart
@@ -21,10 +23,11 @@ The code structure is as follows:
 - `./classification_model.ipynb`: Invokes the construction, training and evaluation of the neural network
 - `./playground.ipynb`: Contains the scripts under development or trial
 
-The progress and results are documented in the `documentation.tex` file, a pdf format can be found in `./build/`
+The progress and results are documented in the `./documentation.tex` file, a pdf format can be found in `./build/`
 The corresponding folders and files:
-- `./plots/`: To store the images inserted into the LaTeX file
 - `./build/`: Temporary build directory for the LaTeX file, contains the pdf as default
+- `./plots/`: To store the images inserted into the $\LaTeX$ file
 - `./documentation.bib`: Bibliography
+- `./documentation.tex`: $\LaTeX$ documentation
 
 ## The project is still in work.
