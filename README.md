@@ -27,7 +27,7 @@ The code structure is as follows:
 
 The progress and results are documented in the `./documentation.tex` file, a pdf format can be found in `./build/`
 The corresponding folders and files:
-- `./build/`: Temporary build directory for the LaTeX file, contains the pdf as default
+- `./build/`: Temporary build directory for the $\LaTeX$ file, contains the pdf as default
 - `./plots/`: To store the images inserted into the $\LaTeX$ file
 - `./documentation.bib`: Bibliography
 - `./documentation.tex`: $\LaTeX$ documentation
