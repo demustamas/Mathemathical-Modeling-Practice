@@ -16,7 +16,7 @@ from tensorflow.keras.optimizers.schedules import ExponentialDecay
 plt.rcParams.update({"font.size": 16})
 
 
-class Environment:
+class DataSet:
     def __init__(
         self,
         raw_folder="./raw/",
@@ -26,6 +26,12 @@ class Environment:
         plot_folder="./plots/",
         PATH=None,
     ):
+        self.raw = pd.DataFrame()
+        self.data = pd.DataFrame()
+        self.augmented = pd.DataFrame()
+        self.preprocessed = pd.DataFrame()
+        self.random_sample = pd.DataFrame()
+
         if PATH is None:
             PATH = [
                 "Train/Non defective/",
@@ -51,18 +57,95 @@ class Environment:
 
         if not os.path.exists(plot_folder):
             os.makedirs(plot_folder)
-
         for p in self.DATA_PATH:
             if not os.path.exists(p):
                 os.makedirs(p)
-
         for p in self.PREPROCESSED_PATH:
             if not os.path.exists(p):
                 os.makedirs(p)
-
         for p in self.AUGMENTED_PATH:
             if not os.path.exists(p):
                 os.makedirs(p)
+
+    def update_dataset(self, dataset=None):
+        def fill_entries(data_path):
+            df = pd.DataFrame(
+                {
+                    "type": pd.Series(dtype="str"),
+                    "defect": pd.Series(dtype="int"),
+                    "defect_str": pd.Series(dtype="str"),
+                    "path": pd.Series(dtype="str"),
+                    "filename": pd.Series(dtype="str"),
+                    "img": pd.Series(dtype="str"),
+                    "height": pd.Series(dtype="int"),
+                    "width": pd.Series(dtype="int"),
+                    "components": pd.Series(dtype="int"),
+                    "R_mean": pd.Series(dtype="float"),
+                    "G_mean": pd.Series(dtype="float"),
+                    "B_mean": pd.Series(dtype="float"),
+                }
+            )
+            for each in data_path:
+                s = each.split("/")
+                y = 1 if s[3] == "Defective" else 0
+                for i, img in enumerate(os.listdir(each)):
+                    data = {
+                        "type": s[2].lower(),
+                        "defect": y,
+                        "defect_str": s[3],
+                        "path": each,
+                        "filename": img,
+                        "img": os.path.join(each, img),
+                        "height": 0,
+                        "width": 0,
+                        "components": 0,
+                        "R_mean": 0,
+                        "G_mean": 0,
+                        "B_mean": 0,
+                    }
+                    new_entry = pd.DataFrame(data=data, index=[len(df.index)])
+                    df = pd.concat([df, new_entry])
+                print(f"Found {i+1} images in {each}")
+            return df
+
+        if dataset == "raw":
+            self.raw = fill_entries(self.RAW_PATH)
+        elif dataset == "data":
+            self.data = fill_entries(self.DATA_PATH)
+        elif dataset == "augmented":
+            self.augmented = fill_entries(self.AUGMENTED_PATH)
+        elif dataset == "preprocessed":
+            self.preprocessed = fill_entries(self.PREPROCESSED_PATH)
+        else:
+            print("Dataset not found! No update done!")
+
+    def generate_random_sample(self, size=4):
+        random_sample_idx = []
+        idx1 = np.random.choice(
+            self.data[(self.data.type == "train") & (self.data.defect == 0)].index, size
+        )
+        idx2 = np.random.choice(
+            self.data[(self.data.type == "train") & (self.data.defect == 1)].index, size
+        )
+        random_sample_idx = np.concatenate([idx1, idx2])
+        self.random_sample = self.data.iloc[random_sample_idx].copy()
+        self.random_sample.reset_index(drop=True, inplace=True)
+
+    def show_random_sample(self):
+        size = len(self.random_sample.index) // 2
+        _, ax = plt.subplots(size, 2, figsize=(15, 6 * size), tight_layout=True)
+        ax = ax.flatten()
+
+        for i, img in enumerate(self.random_sample.img):
+            image = cv.imread(img)
+            ax[i].imshow(image)
+            ax[i].set_xticks(ticks=[])
+            ax[i].set_yticks(ticks=[])
+            ax[i].set_title(
+                f"{self.random_sample.defect_str[i]} - {self.random_sample.filename[i]}"
+            )
+
+        plt.show()
 
     @staticmethod
     def __del__():
@@ -283,22 +366,6 @@ class Augmenter(BaseClass):
         self.N = N
         self.images = df_images[df_images.type == "train"]
         self.save_folder = save_folder
-        self.augmented_images = pd.DataFrame(
-            {
-                "type": pd.Series(dtype="str"),
-                "defect": pd.Series(dtype="int"),
-                "defect_str": pd.Series(dtype="str"),
-                "path": pd.Series(dtype="str"),
-                "filename": pd.Series(dtype="str"),
-                "img": pd.Series(dtype="str"),
-                "height": pd.Series(dtype="int"),
-                "width": pd.Series(dtype="int"),
-                "components": pd.Series(dtype="int"),
-                "R_mean": pd.Series(dtype="float"),
-                "G_mean": pd.Series(dtype="float"),
-                "B_mean": pd.Series(dtype="float"),
-            }
-        )
         self.augment_functions = [
             self.flip,
             self.random_rotate,
@@ -356,33 +423,6 @@ class Augmenter(BaseClass):
         filename = "".join([filename[0], "_augmented.", filename[1]])
         img_path = os.path.join(path, filename)
         cv.imwrite(img_path, img)
-        del img
-        return img_path
-
-    def update_df(self, img, img_path):
-        img_path = img_path.split("/")
-        t = img_path[2].lower()
-        defect_str = img_path[3]
-        path = os.path.join(*img_path[:-1])
-        filename = img_path[-1]
-        img_path = os.path.join(path, filename)
-        data = {
-            "type": t,
-            "defect": 1 if defect_str == "Defective" else 0,
-            "defect_str": defect_str,
-            "path": path,
-            "filename": filename,
-            "img": img_path,
-            "height": img.shape[0],
-            "width": img.shape[1],
-            "components": img.shape[2],
-            "R_mean": np.mean(img[:, :, 0]),
-            "G_mean": np.mean(img[:, :, 1]),
-            "B_mean": np.mean(img[:, :, 2]),
-        }
-        df = pd.DataFrame(data=data, index=[1])
-        self.augmented_images = pd.concat([self.augmented_images, df])
-        self.augmented_images.reset_index(inplace=True, drop=True)
 
     def augment_images(self):
         for cl in set(self.images.defect):
@@ -390,8 +430,8 @@ class Augmenter(BaseClass):
             for img_path in img_path_list:
                 img = cv.imread(img_path)
                 img = self.apply_random_function(img)
-                img_path_new = self.save_image(img, img_path)
-                self.update_df(img, img_path_new)
+                self.save_image(img, img_path)
+                del img
 
     def save_dataframe(self):
         return self.augmented_images
