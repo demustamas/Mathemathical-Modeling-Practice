@@ -122,10 +122,14 @@ class DataSet:
     def generate_random_sample(self, size=4):
         random_sample_idx = []
         idx1 = np.random.choice(
-            self.data[(self.data.type == "train") & (self.data.defect == 0)].index, size
+            self.data[(self.data.type == "train") & (self.data.defect == 0)].index,
+            size=size,
+            replace=False,
         )
         idx2 = np.random.choice(
-            self.data[(self.data.type == "train") & (self.data.defect == 1)].index, size
+            self.data[(self.data.type == "train") & (self.data.defect == 1)].index,
+            size=size,
+            replace=False,
         )
         random_sample_idx = np.concatenate([idx1, idx2])
         self.random_sample = self.data.iloc[random_sample_idx].copy()
@@ -165,7 +169,13 @@ class BaseClass:
 
 
 class ImageProcessor(BaseClass):
-    def __init__(self, steps, kwargs, plot_kwargs=None, save_folder="./preprocessed/"):
+    def __init__(
+        self, steps=None, kwargs=None, plot_kwargs=None, save_folder="./preprocessed/"
+    ):
+        if steps is None:
+            steps = []
+        if kwargs is None:
+            kwargs = {}
         if plot_kwargs is None:
             plot_kwargs = {}
         self.df = None
@@ -184,13 +194,13 @@ class ImageProcessor(BaseClass):
             "original": self.load_sample,
             "crop": self.crop,
             "resize": self.resize,
+            "rotate": self.rotate,
             "grayscale": self.grayscale,
-            "binary": self.binary,
+            "threshold": self.threshold,
             "hist_eq": self.hist_eq,
             "noise_filt": self.noise_filt,
             "stretching": self.stretching,
-            "Laplacian": self.Laplacian,
-            "Canny": self.Canny,
+            "edge_detector": self.edge_detector,
             "Hough": self.Hough,
             "feat_detect": self.feat_detect,
             "show": self.show,
@@ -244,13 +254,33 @@ class ImageProcessor(BaseClass):
             if pad > 0:
                 self.imgs[-1] = self.imgs[-1][:, pad : pad + new_w]
 
+    def rotate(self):
+        angle = self.kwargs.get("rotate").get("angle")
+        h, w = self.imgs[-1].shape[:2]
+        rotation_matrix = cv.getRotationMatrix2D(
+            (h / 2.0, w / 2.0), angle=angle, scale=1
+        )
+        self.steps.append("rotation")
+        self.imgs.append(cv.warpAffine(self.imgs[-1], rotation_matrix, (w, h)))
+
     def grayscale(self):
         self.steps.append("grayscale")
         self.imgs.append(cv.cvtColor(self.imgs[-1], cv.COLOR_BGR2GRAY))
 
-    def binary(self):
-        self.steps.append("binary")
-        self.imgs.append(cv.threshold(self.imgs[-1], 127, 255, cv.THRESH_BINARY)[1])
+    def threshold(self):
+        bin_type = self.kwargs.get("threshold").get("type")
+        self.steps.append("threshold")
+        if bin_type == "global":
+            self.imgs.append(cv.threshold(self.imgs[-1], 127, 255, cv.THRESH_BINARY)[1])
+        elif bin_type == "otsu":
+            self.imgs.append(
+                cv.threshold(self.imgs[-1], 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)[
+                    1
+                ]
+            )
+        else:
+            self.imgs.append(self.imgs[-1])
+            print("Threshold type not yet implemented!")
 
     def hist_eq(self):
         eq_type = self.kwargs.get("hist_eq").get("type")
@@ -280,16 +310,19 @@ class ImageProcessor(BaseClass):
         self.steps.append("stretching")
         self.imgs.append(cv.normalize(self.imgs[-1], None, 0, 1))
 
-    def Laplacian(self):
-        size = self.kwargs.get("Laplacian").get("size")
-        self.steps.append("Laplacian")
-        self.imgs.append(cv.Laplacian(self.imgs[-1], ddepth=cv.CV_64F, ksize=size))
-
-    def Canny(self):
-        low = self.kwargs.get("Canny").get("low")
-        high = self.kwargs.get("Canny").get("high")
-        self.steps.append("Canny")
-        self.imgs.append(cv.Canny(self.imgs[-1], low, high))
+    def edge_detector(self):
+        edge_type = self.kwargs.get("edge_detector").get("type")
+        size = self.kwargs.get("edge_detector").get("size")
+        low = self.kwargs.get("edge_detector").get("low")
+        high = self.kwargs.get("edge_detector").get("high")
+        self.steps.append("edge_detector")
+        if edge_type == "Laplacian":
+            self.imgs.append(cv.Laplacian(self.imgs[-1], ddepth=cv.CV_8U, ksize=size))
+        elif edge_type == "Canny":
+            self.imgs.append(cv.Canny(self.imgs[-1], low=low, high=high))
+        else:
+            self.imgs.append(self.imgs[-1])
+            print("Edge detector type not yet implemented!")
 
     def Hough(self):
         minLL = self.kwargs.get("Hough").get("minLineLength")
