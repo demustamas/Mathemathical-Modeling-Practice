@@ -1700,3 +1700,36 @@ preprocessed/Train/Non defective/135_augmented.jpg
 toolkit/__pycache__/classes.cpython-39.pyc
 documentation.bib.sav
 augmented/Train/Defective/267_augmented.jpg
+augmented/Train/Defective/195_augmented.jpg
+augmented/Train/Defective/207_augmented.jpg
+augmented/Train/Defective/253_augmented.jpg
+augmented/Train/Defective/288_augmented.jpg
+augmented/Train/Non defective/0_augmented.jpg
+augmented/Train/Non defective/15_augmented.jpg
+augmented/Train/Non defective/26_augmented.jpg
+augmented/Train/Non defective/63_augmented.jpg
+logs/train/events.out.tfevents.1672875781.tomcom.13605.0.v2
+logs/train/events.out.tfevents.1672876245.tomcom.15213.0.v2
+logs/train/events.out.tfevents.1672878173.tomcom.17303.0.v2
+logs/train/events.out.tfevents.1672904785.tomcom.26704.0.v2
+logs/train/events.out.tfevents.1672915239.tomcom.31232.0.v2
+logs/train/events.out.tfevents.1672917908.tomcom.31232.2.v2
+logs/train/events.out.tfevents.1672919487.tomcom.35601.0.v2
+logs/train/events.out.tfevents.1672922152.tomcom.37690.0.v2
+logs/validation/events.out.tfevents.1672876787.tomcom.15213.1.v2
+logs/validation/events.out.tfevents.1672878664.tomcom.17303.1.v2
+logs/validation/events.out.tfevents.1672905286.tomcom.26704.1.v2
+logs/validation/events.out.tfevents.1672915344.tomcom.31232.1.v2
+logs/validation/events.out.tfevents.1672917945.tomcom.31232.3.v2
+logs/validation/events.out.tfevents.1672919570.tomcom.35601.1.v2
+logs/validation/events.out.tfevents.1672922244.tomcom.37690.1.v2
+preprocessed/Train/Defective/207_augmented.jpg
+preprocessed/Train/Defective/222_augmented.jpg
+preprocessed/Train/Defective/253_augmented.jpg
+preprocessed/Train/Non defective/0_augmented.jpg
+preprocessed/Train/Non defective/9_augmented.jpg
+preprocessed/Train/Non defective/15_augmented.jpg
+preprocessed/Train/Non defective/26_augmented.jpg
+preprocessed/Train/Non defective/63_augmented.jpg
+preprocessed/Train/Non defective/85_augmented.jpg
+preprocessed/Train/Non defective/112_augmented.jpg

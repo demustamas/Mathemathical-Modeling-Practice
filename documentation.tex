@@ -54,16 +54,13 @@
 \begin{document}
 \maketitle
 \tableofcontents
-\section{Introduction}
-Analyzing images and processing the information stored within
-is a key field of machine learning.
-Classification of different images, identifying and localizing
-different objects are basic problems.
-Several real-life cases prove the usability of such approach
-such as traffic sign recognition, object detection or face recognition.
-The target of current research is to endeavour to create an algorithm
-that is able to classify images taken from parts of the rail track
-to classify whether the rail is defect or not.
+\section{Introduction} \label{sec:intro}
+Analyzing images and processing the information stored within is a key field of machine learning.
+Classification of different images, identifying and localizing different objects are basic problems.
+Several real-life cases prove the usability of such approach such as traffic sign recognition,
+object detection or face recognition.
+The target of current research is to endeavour to create an algorithm that is able to classify images
+taken from parts of the rail track to classify whether the rail is defect or not.
 
 A comprehensive overview about visual inspection technologies used in the railway sector is given
 in \cite{liu_review_2019}.
@@ -91,16 +88,6 @@ Next step if to extract the features from the single ROIs.
 The features are defined based on the geometry of the flaw inside the ROI, the grey-level of the flaw pixels,
 and a so-called tansform-space, where a discrete cosine transform filter is applied.
 The obtained recalls are ranging between 86.7\% and 100\% depending on the type of flaw.
-
-Deep convolutional neural network (DCNN) was proposed in \cite{faghih-roohi_deep_2016} to detect surface defects of rails.
-Video recordings of rail tracks are processed by DCNNs with different sizes related to the size and number
-of the filters, number of convolutional layers and the size of the fully connected layers.
-Hyperbolic tangent and ReLU activation functions used.
-The applied dataset consits of more than 22.000 manually labelled images of 6 classes
-(normal surface, weld, light, moderate or severe squat and joint defects).
-Input image size is 100x50 pixels and converted to grayscale.
-The multi class accuracy is ranging between 91.17\% and 92.47\%.
-The performance increases by increasing the size of the DCNN and by applying ReLU activation functions.
 
 Another solution for rail surface defect detection is described in \cite{ma_texture_2016}.
 Images taken by maintenance vehicles from the top and evaluated for surface defects via two SVM classifiers
@@ -144,24 +131,6 @@ Corrugation lines represented as periodic changes of the gray value that is a sp
 in the frequency domain.
 Corrugation afterwards can be detected by an SVM trained on these features.
 The proposed solution reaches 99\% accuracy.
-
-Another model is described in \cite{shang_detection_2018} for surface defect detection.
-A CNN is applied after preprocessing of the images.
-Canny edge detection is applied to the grayscaled images, that is followed by removing the false edge points.
-The point removal is based on the dynamic range of the edgepoints that is adaptively narrowed to obtain
-a set of points with low standard deviation.
-Once the false points removed, linear fitting performed to obtain the coefficients of the rail edge linears.
-Inception-v3 CNN was applied with transfer learning.
-More than 5000 images were used for the training, more than 2000 for the validation and around 1500 for the final test.
-The image size for the CNN is 960x1280 pixels.
-The model results in 92.54\% recall rate and 92.08\% precision.
-
-A track crack detection approach is presented in \cite{thendral_computer_2021}.
-The image preprocessing covers an adaptive histogram adjustment to increase the contrast of the picture followed by a
-grayscale conversion.
-Gabor transform was applied and the magnitude picture was taken to extract the model features.
-The following statistical values are calculated: mean, variance, skewness, kurtosis, energy and entropy.
-A CNN classifier was applied reaching an accuracy rate of 94.9\%.
 
 \subsection{Component detection}
 \citeauthor{li_component-based_2011} presents a methodology in his work in \cite{li_component-based_2011}
@@ -280,6 +249,74 @@ Data augmentation and dropout were applied to reduce overfitting.
 The training is done with a batch size of 128, momentum 0.9 and weight decay of 0.0005.
 The network reached up to 36.5\% top1 error rates.
 
+\subsection{Convolutional Neural Networks}
+The intention of the study is to construct a CNN for the classification task.
+As it will be underlined later in Section \ref{sec:data_exploration} the use of traditional approaches are very
+limitied in the selected dataset.
+One of today's most favoured approach is to apply CNNs for image classification task, therefore some introduction
+on the topic on constructing the neural network shall be presented besides the articles already cited in
+Section \ref{sec:intro}.
+
+In \cite{elsken_neural_2019} the general approach on finding the proper CNN architecture is explained.
+The main steps are the following: define the Search Space, select a Search Strategy and estimate the performance
+of a selected model.
+Due to high computational needs of the different models a particular focus is put to training speed as key factor
+in finding the proper model.
+More details can be found in \cite{hutter_automated_2019}.
+
+Deep convolutional neural network (DCNN) was proposed in \cite{faghih-roohi_deep_2016} to detect surface defects of rails.
+Video recordings of rail tracks are processed by DCNNs with different sizes related to the size and number
+of the filters, number of convolutional layers and the size of the fully connected layers.
+Hyperbolic tangent and ReLU activation functions used.
+The applied dataset consits of more than 22.000 manually labelled images of 6 classes
+(normal surface, weld, light, moderate or severe squat and joint defects).
+Input image size is 100x50 pixels and converted to grayscale.
+The multi class accuracy is ranging between 91.17\% and 92.47\%.
+The performance increases by increasing the size of the DCNN and by applying ReLU activation functions.
+
+Another model is described in \cite{shang_detection_2018} for surface defect detection.
+A CNN is applied after preprocessing of the images.
+Canny edge detection is applied to the grayscaled images, that is followed by removing the false edge points.
+The point removal is based on the dynamic range of the edgepoints that is adaptively narrowed to obtain
+a set of points with low standard deviation.
+Once the false points removed, linear fitting performed to obtain the coefficients of the rail edge linears.
+Inception-v3 CNN was applied with transfer learning.
+More than 5000 images were used for the training, more than 2000 for the validation and around 1500 for the final test.
+The image size for the CNN is 960x1280 pixels.
+The model results in 92.54\% recall rate and 92.08\% precision.
+
+A track crack detection approach is presented in \cite{thendral_computer_2021}.
+The image preprocessing covers an adaptive histogram adjustment to increase the contrast of the picture followed by a
+grayscale conversion.
+Gabor transform was applied and the magnitude picture was taken to extract the model features.
+The following statistical values are calculated: mean, variance, skewness, kurtosis, energy and entropy.
+A CNN classifier was applied reaching an accuracy rate of 94.9\%.
+One possible approach to achieve high accuracy and reduce development (and training) time is to used pre-trained
+models.
+This is realized by the so called transfer learning approach, where already trained models can be applied for
+specific tasks.
+These models are accessible and can be partially retrained to fit to the exact problem.
+It's applications are growing in te field of image processing.
+
+The model of EfficientNet is brought up in \cite{tan_efficientnet_2020} by describing a scaling method of different
+CNNs to increase accuracy whilst maintaining acceptable training times.
+It defines a ratio between width, depth and resolution (image size) of the model and proposes to compoundly
+scale the models to find the optimal size.
+By scaling ImageNet the top-1 accuracy rate of 84.3\% maintained whilst being 8.4x smaller and 6.1x faster than
+the best existing CNN.
+
+The performance of VGG16, VGG19 and ResNet50 is compared in \cite{sharma_comparison_2022}.
+The validation accuracy of 51.45\%, 83.01\% and 75.41\% is achieved respectively.
+To avoid overfitting regularization as dropout layers with 30\% and data augmentation was added.
+35.000 images were used for the training and additional 10.000 and 15.000 for testing and validation.
+
+A case study of rail track crack detection is presented in \cite{bhat_classification_2022} utilising pre-trained
+VGG16 model.
+1905 images were used for the training with a size of 256x256.
+The dataset is from Kaggle, another variant of the railway track detection consisting of much more images
+(\url{https://www.kaggle.com/datasets/ashikadnan/railway-track-fault-detection-dataset2fastener}) \cite{_railway_}.
+The achieved accuracy on the validation set is 90.62\% without and 98.61\% with data augmentation.
+
 \subsection{Summary}
 There are several approaches present in the current scientific methodology to identify rail track defects.
 A clear differentation can be done based on the nature of the defect, one significant part of the studies deal with
@@ -308,8 +345,7 @@ transform.
 The extraction of the features is the most diversified part.
 Further image processing tools can be employed, such as FFT, wavelet or Gabor transform.
 Image feature descriptors belong here, namely the different histograms, corner detection, SIFT transform.
-For example detecting the rail surface based on the low variation of the grayscale value can be easily identified on
-the histogram.
+For example detecting the rail surface based on the low variation of the grayscale values can be easily identified.
 Additionally the localization of components via feature matching between the reference and target images or by the
 detected edges and lines is supplying valuable features of the model.
 
@@ -425,8 +461,22 @@ The problem formulation defines the main questions of the research to be answere
 \end{enumerate}
 
 \section{Methodology} \label{sec:method}
-The research can be divided to several major steps, these are described in the subsequent sections.
-The algorithm is developed in Python programming language in a form of a Jupyter notebook.
+The study can be divided to several major steps, these are described in the subsequent sections.
+The algorithm is developed in Python programming language in a form of several Jupyter notebooks and can
+be found on the following repository:
+
+\noindent
+\url{https://github.com/demustamas/Mathemathical-Modeling-Practice}
+
+The following jupyter notebooks and utilities are differentiated:
+\begin{enumerate}
+	\item \lstinline{data_cleaning.ipynb} Processes data from \lstinline{raw} to \lstinline{data} state.
+	\item \lstinline{data_explorer.ipynb} Contains the data exploration steps.
+	\item \lstinline{classification_model} The overall CNN based classification model.
+	\item \lstinline{playgorund.ipynb} Contains the algorithms that are under development.
+	\item \lstinline{toolkit/classes.py} Stores class definitions.
+\end{enumerate}
+
 In current research the aim was to store the different stages of the processing in different file
 folders to allow single analytics of each processing step.
 In each folder the same original structure is retained.
@@ -437,11 +487,12 @@ Therefore the following data folders are differentiated.
 	\item \lstinline{augmented} Additional images as result of data augmentation.
 	\item \lstinline{preprocessed} The data after image processing, preprocessed for the machine learning
 	      algorithm. Includes both the original and augmented dataset.
+	\item \lstinline{model} Stores the trained classification models.
 \end{enumerate}
 
 \subsection{Data cleaning}
 The images should be brought to the same quality in order to efficiently process them.
-This covers the identification of corrupted files, correct the wrong file formats
+This covers the identification of corrupted files, correcting the wrong file formats
 and the resolution of all issues that prevents the processing of the data along the same pipeline.
 The result of this step should be a data structure that is easy to handle and process further.
 This includes the following information.
@@ -461,8 +512,12 @@ The distribution and correlation of the images color components considering the 
 A random sample of the images is taken for visualization to study the different defects of the defective class.
 As a final step, the color components were investigated in detail considering the histogram of the component
 values taken for each pixels.
+Considering that the rail surfaces show low standard deviation in the gray values combined with distinct
+values compared to the mean it makes the identification possible.
+Although no other characteristics mentioned in the reviewed articles in Section \ref{sec:intro}.
 This is investigated on the RGB color model and the images were converted to HSV model to get a more
 comprehensive view.
+
 % \subsection{Image processing}
 % \subsection{Data augmentation}
 % \subsection{Neural network configuration}
@@ -484,21 +539,26 @@ The modified dataset is then stored in the \lstinline{data} folder in the same s
 
 Second step is to sum all the main information of each image in a single Python DataFrame to allow easy processing.
 
-\subsection{Data exploration}
+\subsection{Data exploration} \label{sec:data_exploration}
 The distribution of the image sizes are shown in Figure \ref{fig:shape_dist}.
 Please note that higher detail images can be found in the corresponding Jupyter notebook, the aim in this document
 is to explain the evaluation approach and summarize the results.
-Non defective pictures have only 2 shapes, either 3000x4000 or 4000x3000, depending whether it has
-portrait or landscape orientation.
-Defective images have wider distribution in the shapes reaching as high as 8000 pixels and as low as 148 pixels.
-The minimum image size in this case is 148x194 (height x width) and the maximum is 8000x6000.
-All images have 3 color components according to RGB color model.
 \begin{figure}[!ht]
 	\centering
 	\includegraphics[width=\textwidth]{./tex_graphs/shapes.png}
 	\caption{Distribution of the image shapes}
 	\label{fig:shape_dist}
 \end{figure}
+
+Non defective pictures have only 2 shapes, either 3000x4000 or 4000x3000, depending whether it has
+portrait or landscape orientation.
+Defective images have wider distribution in the shapes reaching as high as 8000 pixels and as low as 148 pixels.
+The minimum image size in this case is 148x194 (height x width) and the maximum is 8000x6000.
+All images have 3 color components according to RGB color model.
+However a differentiation based on the image shape might no be wise as it is missing any content related information.
+A new image taken with different resolution might lead to improper prediction in the end.
+The spread over the sizes indicate that during image processing if resizing is considered than not only
+downscaling but upscaling might be necessary.
 
 The distribution and correlation of the mean of the color components with respect to the images is shown on
 Figure \ref{fig:comp_pair}.
@@ -508,9 +568,11 @@ Figure \ref{fig:comp_pair}.
 	\caption{Color component pair analysis}
 	\label{fig:comp_pair}
 \end{figure}
+
 The different color components show comparable histograms.
 The case of the green and blue component the non defective components show a more narrow distribution.
 The paired color components in both classes represent similar feature spaces.
+Out of this no clear differentiation between defective and non defective classes can be done based on the color components.
 
 During the study of the random samples, the following defects have been identified.
 \begin{enumerate}
@@ -554,22 +616,90 @@ During the study of the random samples, the following defects have been identifi
 	\end{subfigure}
 	\caption{Identified rail defects}
 \end{figure}
+
 The magnitude of each defect is varying in a wide range.
 For example in case of cracked rails, from a crack of a few millimeters up to a missing rail part of several
 centimeters can be found.
 Similarly, surface pitting can range from small cracks on the surface up to severe cases, like shown in
 Figure \ref{fig:def_pitting}.
+In several cases components are missing that can be screws, fastening hooks or similar.
+There are cases when these components are covered with ballast rocks.
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=0.8\textwidth]{./tex_graphs/comp_analysis_1.png}
+	\caption{Color component analysis on RGB and HSV color modes}
+	\label{fig:color_analysis}
+\end{figure}
 
 The color component analysis on RGB and HSV colormodes revealed no exact differentiation between the classes.
 The component values highly depend on what is represented on the picture and how the photo is taken.
 For example, presence of shadow has a significant impact on the component histogram.
 An example of the analysis is shown on Figure \ref{fig:color_analysis}.
+These histograms are taken for the overall picture, that is sorting every pixel into bins depending on their color values.
+
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[width=\textwidth]{./tex_graphs/comp_analysis_1.png}
-	\caption{Color component analysis on RGB and HSV color modes}
-	\label{fig:color_analysis}
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{./tex_graphs/rail_surf_gray.png}
+		\caption{Grayscale analysis}
+		\label{fig:rail_surf_gray}
+	\end{subfigure}
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{./tex_graphs/rail_surf_edge.png}
+		\caption{Edge detection}
+		\label{fig:rail_surf_edge}
+	\end{subfigure}
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{./tex_graphs/rail_surf_fft.png}
+		\caption{FFT based detection}
+		\label{fig:rail_surf_fft}
+	\end{subfigure}
+	\caption{Rail surface recognition}
 \end{figure}
+
+The grayscale analysis makes it possible to recognize rail surface as mentioned before.
+The standard deviation and the mean value of the grayscale values correspond to the surface.
+In cases when the rail orientation is alongside with the rows or columns, the identification is relatively easy.
+If the means and standard deviations of the grayscale values are calculated row or columnwise, the resulting function
+will bear the characteristics of the rail surface.
+This is indicated on Figure \ref{fig:rail_surf_gray}.
+
+In similar cases the edge detection works quite efficiently as the rail itself bears a couple of well-defined edges.
+This makes it possible to detect line segments on the edge map which allows to detect the orientation of the rails.
+Once this is known, the image can be rotated in an angle that the longitudinal position of the rail will be
+perpendicular to the calculation direction as shown in Figure \ref{fig:rail_surf_edge}.
+The surface detection can be improved by applying a FFT transform to the image and standardising the mean and
+standard deviation values.
+Such composition is shown on Figure \ref{fig:rail_surf_fft}.
+
+Due to the high variety of the image content (as shown in Figure \ref{fig:variety}),
+orientation and defect method none of the mentioned algorithm lead to a clear segmentation of the image.
+This prevents the localization of any classification algorithm and also prevents the application of any approach that
+is mentioned in Section \ref{sec:intro}.
+To cope with the classification task we turn then to CNNs.
+
+\begin{figure}[!ht]
+	\centering
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{./data/Train/Defective/162.jpg}
+	\end{subfigure}
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{./data/Train/Defective/224.jpg}
+	\end{subfigure}
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{./data/Train/Non defective/2.jpg}
+	\end{subfigure}
+	\caption{Variety of dataset}
+	\label{fig:variety}
+\end{figure}
+
 \section{Discussion} \label{sec:discussion}
 \section{Conclusion} \label{sec:conclusion}
 \newpage

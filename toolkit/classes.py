@@ -11,7 +11,14 @@ import cv2 as cv
 from sklearn.metrics import ConfusionMatrixDisplay, RocCurveDisplay
 from tensorflow.keras.utils import image_dataset_from_directory
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.optimizers.schedules import ExponentialDecay
+from tensorflow.keras.callbacks import (
+    TensorBoard,
+    ModelCheckpoint,
+    EarlyStopping,
+    ReduceLROnPlateau,
+)
+
+from tqdm import tqdm
 
 plt.rcParams.update({"font.size": 16})
 
@@ -23,7 +30,7 @@ class DataSet:
         data_folder="./data/",
         preprocessed_folder="./preprocessed/",
         augmented_folder="./augmented/",
-        plot_folder="./plots/",
+        plot_folder="./tex_graphs/",
         PATH=None,
     ):
         self.raw = pd.DataFrame()
@@ -88,24 +95,27 @@ class DataSet:
             for each in data_path:
                 s = each.split("/")
                 y = 1 if s[3] == "Defective" else 0
-                for i, img in enumerate(os.listdir(each)):
-                    data = {
-                        "type": s[2].lower(),
-                        "defect": y,
-                        "defect_str": s[3],
-                        "path": each,
-                        "filename": img,
-                        "img": os.path.join(each, img),
-                        "height": 0,
-                        "width": 0,
-                        "components": 0,
-                        "R_mean": 0,
-                        "G_mean": 0,
-                        "B_mean": 0,
-                    }
-                    new_entry = pd.DataFrame(data=data, index=[len(df.index)])
-                    df = pd.concat([df, new_entry])
-                print(f"Found {i+1} images in {each}")
+                if len(os.listdir(each)) > 0:
+                    for i, img in enumerate(os.listdir(each)):
+                        data = {
+                            "type": s[2].lower(),
+                            "defect": y,
+                            "defect_str": s[3],
+                            "path": each,
+                            "filename": img,
+                            "img": os.path.join(each, img),
+                            "height": 0,
+                            "width": 0,
+                            "components": 0,
+                            "R_mean": 0,
+                            "G_mean": 0,
+                            "B_mean": 0,
+                        }
+                        new_entry = pd.DataFrame(data=data, index=[len(df.index)])
+                        df = pd.concat([df, new_entry])
+                    print(f"Found {i+1} images in {each}")
+                else:
+                    print(f"Found 0 images in {each}")
             return df
 
         if dataset == "raw":
@@ -367,7 +377,7 @@ class ImageProcessor(BaseClass):
 
     def process_images(self, df_images):
         self.df = df_images
-        for df_entry in self.df.itertuples():
+        for df_entry in tqdm(self.df.itertuples()):
             self.load_sample(df_entry)
             self.defect_class = df_entry.defect_str
             for step in self.pipeline_steps[1:]:
@@ -460,7 +470,7 @@ class Augmenter(BaseClass):
     def augment_images(self):
         for cl in set(self.images.defect):
             img_path_list = self.select_random_images(cl)
-            for img_path in img_path_list:
+            for img_path in tqdm(img_path_list):
                 img = cv.imread(img_path)
                 img = self.apply_random_function(img)
                 self.save_image(img, img_path)
@@ -504,13 +514,9 @@ class Model(BaseClass):
         self.class_names = self.data["Train"].class_names
 
         self.model.compile(
-            optimizer=Adam(
-                lr=ExponentialDecay(
-                    initial_learning_rate=0.01, decay_steps=1000, decay_rate=0.9
-                )
-            ),
+            optimizer=Adam(learning_rate=0.01),
             loss="binary_crossentropy",
-            metrics=["binary_accuracy"],
+            metrics=["accuracy"],
         )
 
     def train_net(self):
@@ -518,6 +524,28 @@ class Model(BaseClass):
             self.data["Train"],
             validation_data=self.data["Validation"],
             epochs=self.epochs,
+            callbacks=[
+                TensorBoard(log_dir="./logs"),
+                ModelCheckpoint(
+                    "./model/vgg16_1.h5",
+                    monitor="val_accuracy",
+                    verbose=1,
+                    save_best_only=True,
+                    save_weights_only=False,
+                    mode="auto",
+                    save_freq="epoch",
+                ),
+                EarlyStopping(
+                    monitor="val_accuracy",
+                    min_delta=0,
+                    patience=30,
+                    verbose=1,
+                    mode="auto",
+                ),
+                # ReduceLROnPlateau(
+                #     monitor="accuracy", factor=0.1, patience=5, min_lr=0.001
+                # ),
+            ],
         )
 
     def predict_test(self):
@@ -533,14 +561,14 @@ class Model(BaseClass):
         _, ax = plt.subplots(2, 2, figsize=(15, 10), tight_layout=True)
         sns.lineplot(
             x=np.arange(self.epochs),
-            y="binary_accuracy",
+            y="accuracy",
             data=self.history.history,
             ax=ax[0, 0],
             label="training",
         )
         sns.lineplot(
             x=np.arange(self.epochs),
-            y="val_binary_accuracy",
+            y="val_accuracy",
             data=self.history.history,
             ax=ax[0, 0],
             label="validation",
