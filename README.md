@@ -22,7 +22,7 @@ The code structure is as follows:
 - `./toolkit/classes.py`: Stores the class definitions
 - `./data_cleaning.ipynb`: Executes the raw data processing
 - `./data_explorer.ipynb`: Contains the scripts for exploring the dataset
-- `./classification_model.ipynb`: Invokes the construction, training and evaluation of the neural network
+- `./classification_model_*.ipynb`: Invokes the construction, training and evaluation of the neural network, * stands for the network model
 - `./playground.ipynb`: Contains the scripts under development or trial
 
 The progress and results are documented in the `./documentation.tex` file, a pdf format can be found in `./build/`
