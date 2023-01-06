@@ -15,7 +15,6 @@ from tensorflow.keras.callbacks import (
     TensorBoard,
     ModelCheckpoint,
     EarlyStopping,
-    ReduceLROnPlateau,
 )
 
 from tqdm import tqdm
@@ -481,7 +480,8 @@ class Augmenter(BaseClass):
 
 
 class Model(BaseClass):
-    def __init__(self, img_height, img_width, load_folder="./preprocessed/"):
+    def __init__(self, name, img_height, img_width, load_folder="./preprocessed/"):
+        self.name = name
         self.height = img_height
         self.width = img_width
         self.load_folder = load_folder
@@ -493,10 +493,10 @@ class Model(BaseClass):
         self.score = None
         self.y_pred = None
         self.y_true = None
-        self.epochs = 10
+        self.epochs = 100
         self.batch_size = 32
 
-    def setup_neural_net(self):
+    def setup_neural_net(self, color_mode="grayscale"):
         datasets = ["Train", "Validation", "Test"]
         for dataset in datasets:
             self.data.update(
@@ -506,7 +506,7 @@ class Model(BaseClass):
                         labels="inferred",
                         label_mode="binary",
                         image_size=(self.height, self.width),
-                        color_mode="grayscale",
+                        color_mode=color_mode,
                         batch_size=self.batch_size,
                     )
                 }
@@ -527,7 +527,7 @@ class Model(BaseClass):
             callbacks=[
                 TensorBoard(log_dir="./logs"),
                 ModelCheckpoint(
-                    "./model/vgg16_1.h5",
+                    f"./models/{self.name}.h5",
                     monitor="val_accuracy",
                     verbose=1,
                     save_best_only=True,
@@ -538,15 +538,13 @@ class Model(BaseClass):
                 EarlyStopping(
                     monitor="val_accuracy",
                     min_delta=0,
-                    patience=30,
+                    patience=20,
                     verbose=1,
                     mode="auto",
                 ),
-                # ReduceLROnPlateau(
-                #     monitor="accuracy", factor=0.1, patience=5, min_lr=0.001
-                # ),
             ],
         )
+        self.epochs = len(self.history.history["accuracy"])
 
     def predict_test(self):
         self.predictions = self.model.predict(self.data["Test"])
