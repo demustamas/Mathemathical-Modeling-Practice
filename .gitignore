@@ -19,3 +19,4 @@ build/documentation.run.xml
 build/documentation.synctex.gz
 build/documentation.toc
 documentation.bib.sav
+tex_refs/bibliography.bib.sav

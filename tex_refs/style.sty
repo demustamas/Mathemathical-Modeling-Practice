@@ -1,0 +1,41 @@
+% Set up page layout
+\usepackage[a4paper, margin=1in]{geometry}
+% \usepackage{indentfirst}
+
+% Language support
+\usepackage{t1enc}
+\usepackage[english]{babel}
+\usepackage{csquotes}
+
+% Bibliography, refs, citations
+\usepackage[sorting=none, backend=biber, style=numeric]{biblatex}
+\addbibresource{./tex_refs/bibliography.bib}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+}
+
+% Itemize with letters
+\usepackage{enumitem}
+
+% Special math representation (matrix, etc.)
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+% Software code
+\usepackage{listings}
+\lstset{
+	language=Python, 
+	basicstyle={\color{blue}}
+}
+
+% Figures
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% Graphics
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.12}
+\usepackage{forest}

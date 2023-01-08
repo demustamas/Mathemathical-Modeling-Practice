@@ -1,51 +1,6 @@
 \documentclass[10pt, final]{article}
 
-% Set up page layout
-\usepackage[a4paper, margin=1in]{geometry}
-% \usepackage{indentfirst}
-
-% Language support
-\usepackage{t1enc}
-\usepackage[english]{babel}
-\usepackage{csquotes}
-
-% Bibliography, refs, citations
-\usepackage[sorting=none, backend=biber, style=numeric]{biblatex}
-\addbibresource{documentation.bib}
-\usepackage{hyperref}
-\hypersetup{
-	colorlinks=true,
-}
-
-% Itemize with letters
-\usepackage{enumitem}
-
-% Special math representation (matrix, etc.)
-\usepackage{amsmath}
-\usepackage{amsfonts}
-
-% Software code
-\usepackage{listings}
-\lstset{
-	language=Python, 
-	basicstyle={\color{blue}}
-}
-
-% Figures
-\usepackage{graphicx}
-\usepackage{caption}
-\usepackage{subcaption}
-
-% Graphics
-\usepackage{tikz}
-\usepackage{pgfplots}
-\pgfplotsset{compat=1.12}
-\usepackage{forest}
-
-% Development tools - only if draft set in the documentclass options
-\usepackage{ifdraft}
-\ifdraft {\usepackage{showframe}}
-
+\usepackage{./tex_refs/style}
 
 \title{Railway Track Fault Detection\\\large Mathemathical Modeling Practice\\}
 \author{Tamás DEMUS\\XP4B9D}
@@ -472,7 +427,8 @@ The following jupyter notebooks and utilities are differentiated:
 \begin{enumerate}
 	\item \lstinline{data_cleaning.ipynb} Processes data from \lstinline{raw} to \lstinline{data} state.
 	\item \lstinline{data_explorer.ipynb} Contains the data exploration steps.
-	\item \lstinline{classification_model} The overall CNN based classification model.
+	\item \lstinline{classification_model_*} The overall CNN based classification model,
+	      where * stands for the applied network model.
 	\item \lstinline{playgorund.ipynb} Contains the algorithms that are under development.
 	\item \lstinline{toolkit/classes.py} Stores class definitions.
 \end{enumerate}
@@ -518,11 +474,11 @@ Although no other characteristics mentioned in the reviewed articles in Section 
 This is investigated on the RGB color model and the images were converted to HSV model to get a more
 comprehensive view.
 
-\subsection{Model building}
+\subsection{Model structure}
 The construction of the CNN follows two main approaches.
 The first one is to build a model from scratch and try to find a setup that learns the features of the given
 dataset.
-As basis the structure of LeNet-5, AlexNet and VGG is considered as these were the first networks used for image
+As basis the structure of LeNet-5, AlexNet and VGG16 is considered as these were the first networks used for image
 classification and these bear a structure that is not too complex for implementation.
 A detailed view on these networks can be found in \cite{karim_illustrated_2022}.
 Based on the reviewed literature and the very high number of variables in a CNN present an extended dataset is
@@ -532,6 +488,8 @@ Therefore the expectation about the achievable accuracy shall not be raised too 
 The second approach is to use a pre-trained model and apply transform learning.
 The models of VGG16, InceptionV3, Resnet50, EfficientNet are chosen as these are available in the Tensorflow
 Keras ecosystem \cite{keras_applications}.
+The models were downloaded without the dense layers on the top of the network.
+These layers then added to the network and trained manually on the dataset.
 As this is becoming more and more a common was and also already studies done in this direction
 (refer to \cite{_railway_}), an acceptable accuracy range is expected, at least in the range of what is already
 achieved in different studies.
@@ -539,14 +497,27 @@ achieved in different studies.
 The model applies Adam optimizer, EarlyStopping and ModelCheckpoint to monitor validation accuracy.
 In all cases the output layers are modified to supply binary values as we need to classify between defective and
 non defective images with a corresponding sigmoid activation function.
-The performance estimation is done on the test dataset.
 
 The input images are subject to some limited image processing that covers grayscale conversion, histogram equalization,
 noise filtering and resizing to the applicable input size.
+All manipulation is than with the OpenCV module, version 4.7.0. \cite{_home_}.
 
-Data augmentation was performed to increase the dataset size by taking 25 defective and 25 non defective images
+Data augmentation was performed to increase the dataset size by taking defective and non defective images
 from the training set and applying one of the following: flipping, with a random angle between +90°and -90,
 random zoom with a ratio between 0.8 and 1.2 and random center crop with a ratio of 0.1.
+
+\subsection{Model selection and evaluation}
+Selecting the best model is based on the best validation accuracy achieved, that is monitored by the EarlyStopping
+callback.
+Once the training is done, the best model weights are reloaded and the final performance estimation is done
+on the test dataset.
+For discussion the following metrics are used:
+\begin{enumerate}
+	\item Accuracy of the model on the training and validation dataset.
+	\item Loss function (learning curve) of the training and validation dataset.
+	\item Confusion matrix built on the test dataset.
+	\item ROC curve based on the test dataset.
+\end{enumerate}
 
 \section{Results} \label{sec:results}
 \subsection{Data cleaning}
@@ -726,7 +697,185 @@ To cope with the classification task we turn then to CNNs.
 	\label{fig:variety}
 \end{figure}
 
-\subsection{LeNet-5}
+\subsection{LeNet-5} \label{sec:Lenet5}
+LeNet-5 is one of the earliest models used originally for the handwritten digit recogniton.
+It suffers from computational limitations due to the low performance of the computers at the time of being constructed,
+but it defined the basic structure of a convolutional networks used afterwads.
+The structure of the neural network according to Tensorflow Keras is shown in Table \ref{table:LeNet5_struct}.
+As the input is limited to a single channel, the images were converted to grayscale followed by adaptive histogram
+normalization (CLAHE) and noise filtering with a median filter with kernel of 11x11.
+After all the changes applied, the images were resized to 32x32 pixels.
+
+\begin{table}[!ht]
+	\centering
+	\begin{tabular}{l c c c c c c}
+		Layer            & Filters / Neurons & Size / Rate & Padding & Stride & Feature map  & Activation \\
+		\hline
+		Input            & -                 & -           & -       & -      & 32 x 32 x 1  & -          \\
+		Rescaling        & -                 & -           & -       & -      & 32 x 32 x 1  & -          \\
+		Conv2D           & 6                 & 5 x 5       & valid   & 2      & 28 x 28 x 6  & tanh       \\
+		AveragePooling2D & -                 & 2 x 2       & -       & 1      & 14 x 14 x 6  & -          \\
+		Conv2D           & 16                & 5 x 5       & valid   & 2      & 10 x 10 x 16 & tanh       \\
+		AveragePooling2D & -                 & 2 x 2       & -       & 1      & 5 x 5 x 16   & -          \\
+		Flatten          & -                 & -           & -       & -      & 400          & -          \\
+		Dense            & 120               & -           & -       & -      & 120          & tanh       \\
+		Dense            & 84                & -           & -       & -      & 84           & tanh       \\
+		Dense            & 1                 & -           & -       & -      & 1            & sigmoid    \\
+		\hline
+	\end{tabular}
+	\caption{LeNet-5 layer structure}
+	\label{table:LeNet5_struct}
+\end{table}
+
+A learning rate of 0.0001 was used as initial value which was decreased by the ReduceLROnPlateau callback to 0.000005 by
+a factor of 0.5 and with a patience set to 2.
+The accuracy peak on the validation dataset reached with a low number of epochs.
+The resulting metrics are shown in \ref{fig:LeNet5_metrics}.
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=\textwidth]{./tex_graphs/metrics_LeNet-5.png}
+	\caption{LeNet-5 metrics}
+	\label{fig:LeNet5_metrics}
+\end{figure}
+
+The accuracy increases rapidly in teh first few epochs topping at around the 10th epoch at 0.59 for the valudation
+and training dataset.
+Afterwards the training accuracy slightly decreases and the validation accuracy decreases as well.
+The latter is showing bigger fluctuation, mostly due to the limited number of validation data points, a single
+change in the classification in one of the images leaves to a bigger relative change.
+The loss function decreases continuously for both datasets, howevere an increasing distance between the two
+is observed.
+The confusion matrix and the ROC curve shows a classifier with 59\% accuracy.
+However a deeper look into the learning curves reveal that the increasing gap between the training and validation
+data shows that the training data might be unrepresentative to the test data.
+It has to be noted that for different training sessions the confusion matrix and ROC curve also show some
+variance of accuracy ranging down to 45\%.
+The resulting trained model did not prove to be stable.
+This could be due to the fact that the layer structure is very limited and failed to learn the proper features
+or the training data is not representative to the test data.
+
+\subsection{AlexNet} \label{sec:AlexNet}
+AlexNet is the second major convolutional network borught up several years after LeNet-5 was introduced.
+Compared to LeNet-5 it's depth, width and resolution is increased significantly.
+The structure is described in Table \ref{table:AlexNet_struct}.
+It introduces ReLU activation function together with DropOut layers and overlapping pooling.
+The input accepts color pictures, therefore no manipulation of the images were done, except resizing to
+correct size.
+
+\begin{table}[!ht]
+	\centering
+	\begin{tabular}{l c c c c c c}
+		Layer        & Filters / Neurons & Size / Rate & Padding & Stride & Feature map   & Activation \\
+		\hline
+		Input        & -                 & -           & -       & -      & 227 x 227 x 3 & -          \\
+		Rescaling    & -                 & -           & -       & -      & 227 x 227 x 3 & -          \\
+		Conv2D       & 96                & 11 x 11     & valid   & 4      & 55 x 55 x 96  & ReLU       \\
+		MaxPooling2D & -                 & 3 x 3       & valid   & 2      & 27 x 27 x 96  & -          \\
+		Conv2D       & 256               & 5 x 5       & same    & 1      & 27 x 27 x 256 & ReLU       \\
+		MaxPooling2D & -                 & 3 x 3       & valid   & 2      & 13 x 13 x 256 & -          \\
+		Conv2D       & 384               & 3 x 3       & same    & 1      & 13 x 13 x 384 & ReLU       \\
+		Conv2D       & 384               & 3 x 3       & same    & 1      & 13 x 13 x 384 & ReLU       \\
+		Conv2D       & 256               & 3 x 3       & same    & 1      & 13 x 13 x 256 & ReLU       \\
+		MaxPooling2D & -                 & 3 x 3       & valid   & 2      & 6 x 6 x 256   & -          \\
+		Dropout      & -                 & 0.5         & -       & -      & 6 x 6 x 256   & -          \\
+		Flatten      & -                 & -           & -       & -      & 9216          & -          \\
+		Dense        & 4096              & -           & -       & -      & 4096          & ReLU       \\
+		Dropout      & -                 & 0.5         & -       & -      & 4096          & -          \\
+		Dense        & 4096              & -           & -       & -      & 4096          & ReLU       \\
+		Dense        & 1                 & -           & -       & -      & 1             & sigmoid    \\
+		\hline
+	\end{tabular}
+	\caption{AlexNet layer structure}
+	\label{table:AlexNet_struct}
+\end{table}
+
+During training the same optimization settings were applied as for LeNet-5.
+The training time increased significantly due to the increase of the trainable parameters.
+The results are shown in Figure \ref{fig:AlexNet_metrics}.
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=\textwidth]{./tex_graphs/metrics_AlexNet.png}
+	\caption{AlexNet metrics}
+	\label{fig:AlexNet_metrics}
+\end{figure}
+
+An accuracy rate of almost 90\% achieved on the validation dataset, whilst the training accuracy reach 100\%.
+This indicates that the network is able to learn the training dataset, but an overfitting can be seen after
+approx. 120 epochs.
+Same can be seen on the learning curves as well.
+The confusion matrix understates that the training data is not representative to the test data.
+A fairly good fitting validation set did not result in a good fit on the test data, only an accuracy of
+36 \% achieved.
+
+\subsection{VGG16} \label{sec:VGG16}
+The VGG model brings a different approach to the structure of the CNNs.
+Instead of using single big filters (like a 11 x 11 filter in AlexNet), several smaller filters applied
+consecutevily.
+Applying such small filter on the input layer results in a larger feature map on the input.
+Additionally increasing the number of consecutive layers reduce the tendency to overfit.
+The implemented structure of VGG16 is shown on Table \ref{table:VGG16_struct}.
+As input image, resized color images used without any further alteration.
+
+\begin{table}[!ht]
+	\centering
+	\begin{tabular}{l c c c c c c}
+		Layer        & Filters / Neurons & Size / Rate & Padding & Stride & Feature map     & Activation \\
+		\hline
+		Input        & -                 & -           & -       & -      & 224 x 224 x 3   & -          \\
+		Rescaling    & -                 & -           & -       & -      & 224 x 224 x 3   & -          \\
+		Conv2D       & 64                & 3 x 3       & same    & 1      & 224 x 224 x 64  & ReLU       \\
+		Conv2D       & 64                & 3 x 3       & same    & 1      & 224 x 224 x 64  & ReLU       \\
+		MaxPooling2D & -                 & 2 x 2       & valid   & 2      & 112 x 112 x 64  & -          \\
+		Conv2D       & 128               & 3 x 3       & same    & 1      & 112 x 112 x 128 & ReLU       \\
+		Conv2D       & 128               & 3 x 3       & same    & 1      & 112 x 112 x 128 & ReLU       \\
+		MaxPooling2D & -                 & 2 x 2       & valid   & 2      & 56 x 56 x 128   & -          \\
+		Conv2D       & 256               & 3 x 3       & same    & 1      & 56 x 56 x 256   & ReLU       \\
+		Conv2D       & 256               & 3 x 3       & same    & 1      & 56 x 56 x 256   & ReLU       \\
+		Conv2D       & 256               & 3 x 3       & same    & 1      & 56 x 56 x 256   & ReLU       \\
+		MaxPooling2D & -                 & 2 x 2       & valid   & 2      & 28 x 28 x 256   & -          \\
+		Conv2D       & 512               & 3 x 3       & same    & 1      & 28 x 28 x 512   & ReLU       \\
+		Conv2D       & 512               & 3 x 3       & same    & 1      & 28 x 28 x 512   & ReLU       \\
+		Conv2D       & 512               & 3 x 3       & same    & 1      & 28 x 28 x 512   & ReLU       \\
+		MaxPooling2D & -                 & 2 x 2       & valid   & 2      & 14 x 14 x 512   & -          \\
+		Conv2D       & 512               & 3 x 3       & same    & 1      & 14 x 14 x 512   & ReLU       \\
+		Conv2D       & 512               & 3 x 3       & same    & 1      & 14 x 14 x 512   & ReLU       \\
+		Conv2D       & 512               & 3 x 3       & same    & 1      & 14 x 14 x 512   & ReLU       \\
+		MaxPooling2D & -                 & 2 x 2       & valid   & 2      & 7 x 7 x 512     & -          \\
+		Flatten      & -                 & -           & -       & -      & 25088           & -          \\
+		Dense        & 4096              & -           & -       & -      & 4096            & ReLU       \\
+		Dense        & 4096              & -           & -       & -      & 4096            & ReLU       \\
+		Dense        & 1                 & -           & -       & -      & 1               & sigmoid    \\
+		\hline
+	\end{tabular}
+	\caption{VGG16 layer structure}
+	\label{table:VGG16_struct}
+\end{table}
+
+The initial learning rate is reduced to 0.00001 and the ReduceLROnPlateau patience was set to 1.
+This helped to found the local minimum only in a few starting epochs.
+This model required the longest training time.
+The resulting metrics can be seen on Figure \ref{fig:VGG16_metrics}.
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=\textwidth]{./tex_graphs/metrics_VGG16.png}
+	\caption{VGG16 metrics}
+	\label{fig:VGG16_metrics}
+\end{figure}
+
+The training needed much less epochs than in previous case, reaching the validation accuracy of 83.87\% at the
+64\textsuperscript{th} eopch.
+An overfitting can be seen from the learning curve, which indicates optimal epoch number of 45, where the
+validation accuracy was 77.41\%.
+The model fitted to the test data resulting in an accuracy of 59\%, although due to long running time only a single
+training is performed, therefore the assumption that the training data is not representative to the test data
+can not be dropped.
+
+\subsection{Pretrained VGG16}
+In order to improve our models, pretrained models are applied.
+To allow comparison on the effect of prelearned features the same VGG16 model was selected.
 
 
 \section{Discussion} \label{sec:discussion}

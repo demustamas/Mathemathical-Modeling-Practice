@@ -10,12 +10,7 @@ import cv2 as cv
 
 from sklearn.metrics import ConfusionMatrixDisplay, RocCurveDisplay
 from tensorflow.keras.utils import image_dataset_from_directory
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import (
-    TensorBoard,
-    ModelCheckpoint,
-    EarlyStopping,
-)
+from tensorflow.keras.applications import VGG16, ResNet50, EfficientNetB7
 
 from tqdm import tqdm
 
@@ -480,12 +475,21 @@ class Augmenter(BaseClass):
 
 
 class Model(BaseClass):
-    def __init__(self, name, img_height, img_width, load_folder="./preprocessed/"):
+    def __init__(
+        self,
+        name,
+        img_height,
+        img_width,
+        pretrained=None,
+        load_folder="./preprocessed/",
+    ):
         self.name = name
         self.height = img_height
         self.width = img_width
         self.load_folder = load_folder
         self.model = None
+        self.optimizer = None
+        self.callbacks = None
         self.data = {}
         self.class_names = None
         self.history = None
@@ -495,6 +499,21 @@ class Model(BaseClass):
         self.y_true = None
         self.epochs = 100
         self.batch_size = 32
+        if pretrained == "VGG16":
+            self.pretrained_model = VGG16(
+                include_top=False, weights="imagenet", input_shape=(224, 224, 3)
+            )
+            self.pretrained_model.trainable = False
+        elif pretrained == "ResNet50":
+            self.pretrained_model = ResNet50(
+                include_top=False,
+                weights="imagenet",
+                input_shape=(224, 224, 3),
+                pooling="avg",
+            )
+            self.pretrained_model.trainable = False
+        else:
+            self.pretrained_model = None
 
     def setup_neural_net(self, color_mode="grayscale"):
         datasets = ["Train", "Validation", "Test"]
@@ -508,13 +527,15 @@ class Model(BaseClass):
                         image_size=(self.height, self.width),
                         color_mode=color_mode,
                         batch_size=self.batch_size,
+                        shuffle=True,
                     )
                 }
             )
+
         self.class_names = self.data["Train"].class_names
 
         self.model.compile(
-            optimizer=Adam(learning_rate=0.01),
+            optimizer=self.optimizer,
             loss="binary_crossentropy",
             metrics=["accuracy"],
         )
@@ -524,25 +545,7 @@ class Model(BaseClass):
             self.data["Train"],
             validation_data=self.data["Validation"],
             epochs=self.epochs,
-            callbacks=[
-                TensorBoard(log_dir="./logs"),
-                ModelCheckpoint(
-                    f"./models/{self.name}.h5",
-                    monitor="val_accuracy",
-                    verbose=1,
-                    save_best_only=True,
-                    save_weights_only=False,
-                    mode="auto",
-                    save_freq="epoch",
-                ),
-                EarlyStopping(
-                    monitor="val_accuracy",
-                    min_delta=0,
-                    patience=20,
-                    verbose=1,
-                    mode="auto",
-                ),
-            ],
+            callbacks=self.callbacks,
         )
         self.epochs = len(self.history.history["accuracy"])
 
@@ -555,8 +558,8 @@ class Model(BaseClass):
         print("Test values:         ", self.y_true)
         print("Predicted values:    ", self.y_pred)
 
-    def show_metrics(self):
-        _, ax = plt.subplots(2, 2, figsize=(15, 10), tight_layout=True)
+    def show_metrics(self, save_folder=None):
+        _, ax = plt.subplots(2, 2, figsize=(15, 8), tight_layout=True)
         sns.lineplot(
             x=np.arange(self.epochs),
             y="accuracy",
@@ -594,4 +597,6 @@ class Model(BaseClass):
             colorbar=False,
         )
         RocCurveDisplay.from_predictions(self.y_true, self.y_pred, ax=ax[1, 1])
+        if save_folder:
+            plt.savefig(os.path.join(save_folder, f"metrics_{self.name}.png"))
         plt.show()
