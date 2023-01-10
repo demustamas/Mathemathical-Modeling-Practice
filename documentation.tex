@@ -486,10 +486,13 @@ required for this method.
 Therefore the expectation about the achievable accuracy shall not be raised too high.
 
 The second approach is to use a pre-trained model and apply transform learning.
-The models of VGG16, InceptionV3, Resnet50, EfficientNet are chosen as these are available in the Tensorflow
+The models of VGG16 and Resnet50 are chosen as these are available in the Tensorflow
 Keras ecosystem \cite{keras_applications}.
-The models were downloaded without the dense layers on the top of the network.
-These layers then added to the network and trained manually on the dataset.
+The models were downloaded without the dense layers on the top of the network pretrained on the Imagenet dataset.
+These layers then added to the network and trained manually on the dataset whilst keeping the core convolutional
+layers freezed (feature extraction only).
+Once the training is done, than the layers were unfreezed (except the BatchNormalization in case of the ResNet50)
+for fine-tuning the model.
 As this is becoming more and more a common was and also already studies done in this direction
 (refer to \cite{_railway_}), an acceptable accuracy range is expected, at least in the range of what is already
 achieved in different studies.
@@ -739,8 +742,8 @@ The resulting metrics are shown in \ref{fig:LeNet5_metrics}.
 	\label{fig:LeNet5_metrics}
 \end{figure}
 
-The accuracy increases rapidly in teh first few epochs topping at around the 10th epoch at 0.59 for the valudation
-and training dataset.
+The accuracy increases rapidly in teh first few epochs topping at around the 10th epoch at 59.67\% on the
+validation dataset.
 Afterwards the training accuracy slightly decreases and the validation accuracy decreases as well.
 The latter is showing bigger fluctuation, mostly due to the limited number of validation data points, a single
 change in the classification in one of the images leaves to a bigger relative change.
@@ -801,7 +804,7 @@ The results are shown in Figure \ref{fig:AlexNet_metrics}.
 	\label{fig:AlexNet_metrics}
 \end{figure}
 
-An accuracy rate of almost 90\% achieved on the validation dataset, whilst the training accuracy reach 100\%.
+An accuracy rate of 87\% achieved on the validation dataset, whilst the training accuracy reaches 100\%.
 This indicates that the network is able to learn the training dataset, but an overfitting can be seen after
 approx. 120 epochs.
 Same can be seen on the learning curves as well.
@@ -876,9 +879,82 @@ can not be dropped.
 \subsection{Pretrained VGG16}
 In order to improve our models, pretrained models are applied.
 To allow comparison on the effect of prelearned features the same VGG16 model was selected.
+An initial learning rate  is set to 0.00001 with a ReduceLROnPlateau callback set with a patience of 1 and minimal
+learning rate of 0.000001.
 
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=\textwidth]{./tex_graphs/metrics_VGG16_pretrained.png}
+	\caption{Pretrained VGG16 metrics}
+	\label{fig:VGG16_pretrained_metrics}
+\end{figure}
+
+The model shows significant improvement in the performance the top accuracy of 91.93\% is reached after 6 epochs
+on the validation set.
+The unrepresentativeness of the training data can be observed slightly on the learning curves after approximately
+10 epochs.
+The test data shows a classifier with an accuracy of 59\%.
+During fine-tuning both the initial and the minimal learning rate was reduced to the one tenth.
+Unfortunately no improvement to the model achieved.
+
+\subsection{Pretrained ResNet50}
+
+Second pretrained model used is the ResNet50 that applies fewer filters with lower complexity.
+Shortcut connections added between sets of convolutional layers to perform identity mapping.
+
+The training with feature extraction settings done with an initial learning rate of 0.0001 and a minimum learning
+rate of 0.000005 added with ReduceLROnPlateau.
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=\textwidth]{./tex_graphs/metrics_ResNet50_pretrained.png}
+	\caption{Pretrained ResNet50 metrics}
+	\label{fig:ResNet50_pretrained_metrics}
+\end{figure}
+
+The model performed fairl well reaching an accuracy rate 64.51\% on the validation set.
+The loss function of the validation set is lower than of the training set indicating that the model was fitted
+better on the validation set than to the training set.
+This might happend due to regulraization applied during training, low size of validation set, the validation set
+is not representative to the training set or due to the applied data augmentation.
+In our case all of the above (except the regularization) might contribute to this effect.
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=\textwidth]{./tex_graphs/metrics_ResNet50_pretrained_finetuned.png}
+	\caption{Fine-tuned ResNet50 metrics}
+	\label{fig:ResNet50_finetuned_metrics}
+\end{figure}
+
+Applying fine-tuning by reducing the learning rates to the one tenth resulted in a siginificatn improvement
+of the model performance.
+The accuracy on validation set reached 79.03\%.
+However the unrepresentative train dataset can be once again observed on the learning curves.
+For both results (feature extraction only and fine tuning applied) the classifier performed poorly on the test
+dataset with 41\% and 45\% accuracy rates respectively.
 
 \section{Discussion} \label{sec:discussion}
+
+The results of the applied models can be seen in Table \ref{table:results_summary}.
+
+\begin{table}[!ht]
+	\centering
+	\begin{tabular}{l c c c c c}
+		\multirow{2}{*}{Model} & \multicolumn{2}{c}{Training} & \multicolumn{2}{c}{Validation} & \multirow{2}{*}{Test Accuracy}                 \\
+		                       & Accuracy                     & Loss                           & Accuracy                       & Loss   &      \\
+		\hline
+		LeNet-5                & 59.14\%                      & 0.6858                         & 59.68\%                        & 0.6884 & 59\% \\
+		AlexNet                & 84.86\%                      & 0.3921                         & 87.10\%                        & 0.3749 & 36\% \\
+		VGG16                  & 90.00\%                      & 0.2541                         & 83.87\%                        & 0.5895 & 59\% \\
+		Pretrained VGG16       & 97.71\%                      & 0.1840                         & 91.94\%                        & 0.3871 & 55\% \\
+		Pretrained ResNet50    & 48.86\%                      & 0.6936                         & 64.52\%                        & 0.6836 & 41\% \\
+		Fine-tuned Resnet50    & 75.71\%                      & 0.4569                         & 79.03\%                        & 0.5169 & 45\% \\
+		\hline
+	\end{tabular}
+	\caption{Model results at optimal number of epochs}
+	\label{table:results_summary}
+\end{table}
+
 \section{Conclusion} \label{sec:conclusion}
 \newpage
 \listoffigures

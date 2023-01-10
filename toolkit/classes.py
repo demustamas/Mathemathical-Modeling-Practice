@@ -10,7 +10,7 @@ import cv2 as cv
 
 from sklearn.metrics import ConfusionMatrixDisplay, RocCurveDisplay
 from tensorflow.keras.utils import image_dataset_from_directory
-from tensorflow.keras.applications import VGG16, ResNet50, EfficientNetB7
+from tensorflow.keras.applications import VGG16, ResNet50
 
 from tqdm import tqdm
 

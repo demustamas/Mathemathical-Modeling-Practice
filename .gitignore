@@ -19,9 +19,4 @@ build/documentation.synctex.gz
 build/documentation.toc
 documentation.bib.sav
 tex_refs/bibliography.bib.sav
-models/AlexNet.h5
-models/LeNet-5-increased.h5
-models/LeNet-5.h5
-models/ResNet50_pretrained.h5
-models/VGG16_pretrained.h5
-models/VGG16.h5
+models/
