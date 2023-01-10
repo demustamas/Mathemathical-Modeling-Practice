@@ -24,12 +24,14 @@ The code structure is as follows:
 - `./data_explorer.ipynb`: Contains the scripts for exploring the dataset
 - `./classification_model_*.ipynb`: Invokes the construction, training and evaluation of the neural network, * stands for the network model
 - `./playground.ipynb`: Contains the scripts under development or trial
+- `./models/`: Stores saved models (created by the scripts)
 
 The progress and results are documented in the `./documentation.tex` file, a pdf format can be found in `./build/`
 The corresponding folders and files:
 - `./build/`: Temporary build directory for the $\LaTeX$ file, contains the pdf as default
-- `./plots/`: To store the images inserted into the $\LaTeX$ file
-- `./documentation.bib`: Bibliography
+- `./tex_graphs/`: To store the images inserted into the $\LaTeX$ document
+- './tex_refs/documentation.bib`: Bibliography
+- './tex_refs/style.sty`: Style file for $\LaTeX$
 - `./documentation.tex`: $\LaTeX$ documentation
 
 ## The project is still in work.
