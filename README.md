@@ -30,7 +30,7 @@ The progress and results are documented in the `./documentation.tex` file, a pdf
 The corresponding folders and files:
 - `./build/`: Temporary build directory for the $\LaTeX$ file, contains the pdf as default
 - `./tex_graphs/`: To store the images inserted into the $\LaTeX$ document
-- `./tex_refs/documentation.bib`: Bibliography
+- `./tex_refs/bibliography.bib`: Bibliography
 - `./tex_refs/style.sty`: Style file for $\LaTeX$
 - `./documentation.tex`: $\LaTeX$ documentation
 
