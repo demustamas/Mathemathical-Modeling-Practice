@@ -8,9 +8,19 @@ import seaborn as sns
 
 import cv2 as cv
 
-from sklearn.metrics import ConfusionMatrixDisplay, RocCurveDisplay
 from tensorflow.keras.utils import image_dataset_from_directory
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import (
+    Rescaling,
+    Conv2D,
+    AveragePooling2D,
+    MaxPooling2D,
+    Dropout,
+    Flatten,
+    Dense,
+)
 from tensorflow.keras.applications import VGG16, ResNet50
+from sklearn.metrics import ConfusionMatrixDisplay, RocCurveDisplay
 
 from tqdm import tqdm
 
@@ -478,14 +488,18 @@ class Model(BaseClass):
     def __init__(
         self,
         name,
-        img_height,
-        img_width,
-        pretrained=None,
+        img_shape=(None, None, None),
         load_folder="./preprocessed/",
     ):
         self.name = name
-        self.height = img_height
-        self.width = img_width
+        if self.name == "AlexNet":
+            self.img_shape = (227, 227, 3)
+        elif self.name == "LeNet-5":
+            self.img_shape = (32, 32, 1)
+        elif self.name in ["VGG16", "VGG16_pretrained", "ResNet50_pretrained"]:
+            self.img_shape = (224, 224, 3)
+        else:
+            self.img_shape = img_shape
         self.load_folder = load_folder
         self.model = None
         self.optimizer = None
@@ -499,23 +513,8 @@ class Model(BaseClass):
         self.y_true = None
         self.epochs = 100
         self.batch_size = 32
-        if pretrained == "VGG16":
-            self.pretrained_model = VGG16(
-                include_top=False, weights="imagenet", input_shape=(224, 224, 3)
-            )
-            self.pretrained_model.trainable = False
-        elif pretrained == "ResNet50":
-            self.pretrained_model = ResNet50(
-                include_top=False,
-                weights="imagenet",
-                input_shape=(224, 224, 3),
-                pooling="avg",
-            )
-            self.pretrained_model.trainable = False
-        else:
-            self.pretrained_model = None
 
-    def setup_neural_net(self, color_mode="grayscale"):
+    def load_datasets(self, color_mode="grayscale"):
         datasets = ["Train", "Validation", "Test"]
         for dataset in datasets:
             self.data.update(
@@ -524,16 +523,204 @@ class Model(BaseClass):
                         os.path.join(self.load_folder, dataset),
                         labels="inferred",
                         label_mode="binary",
-                        image_size=(self.height, self.width),
+                        image_size=self.img_shape[:2],
                         color_mode=color_mode,
                         batch_size=self.batch_size,
                         shuffle=True,
                     )
                 }
             )
-
         self.class_names = self.data["Train"].class_names
 
+    def build_model(self):
+        if self.name == "LeNet-5":
+            self.model = Sequential(
+                [
+                    Rescaling(1.0 / 255, input_shape=self.img_shape),
+                    Conv2D(
+                        filters=6,
+                        kernel_size=(5, 5),
+                        strides=(1, 1),
+                        padding="valid",
+                        activation="tanh",
+                    ),
+                    AveragePooling2D(pool_size=(2, 2), strides=(2, 2), padding="valid"),
+                    Conv2D(
+                        filters=16,
+                        kernel_size=(5, 5),
+                        strides=(1, 1),
+                        padding="valid",
+                        activation="tanh",
+                    ),
+                    AveragePooling2D(pool_size=(2, 2), strides=(2, 2), padding="valid"),
+                    Flatten(),
+                    Dense(units=120, activation="tanh"),
+                    Dense(units=84, activation="tanh"),
+                    Dense(1, activation="sigmoid"),
+                ]
+            )
+        elif self.name == "AlexNet":
+            self.model = Sequential(
+                [
+                    Rescaling(1.0 / 255, input_shape=self.img_shape),
+                    Conv2D(96, 11, strides=(4, 4), padding="valid", activation="ReLU"),
+                    MaxPooling2D(pool_size=(3, 3), strides=(2, 2), padding="valid"),
+                    Conv2D(256, 5, strides=(1, 1), padding="same", activation="ReLU"),
+                    MaxPooling2D(pool_size=(3, 3), strides=(2, 2), padding="valid"),
+                    Conv2D(384, 3, strides=(1, 1), padding="same", activation="ReLU"),
+                    Conv2D(384, 3, strides=(1, 1), padding="same", activation="ReLU"),
+                    Conv2D(256, 3, strides=(1, 1), padding="same", activation="ReLU"),
+                    MaxPooling2D(pool_size=(3, 3), strides=(2, 2), padding="valid"),
+                    Dropout(0.5),
+                    Flatten(),
+                    Dense(units=4096, activation="ReLU"),
+                    Dropout(0.5),
+                    Dense(units=4096, activation="ReLU"),
+                    Dense(1, activation="sigmoid"),
+                ]
+            )
+        elif self.name == "VGG16":
+            self.model = Sequential(
+                [
+                    Rescaling(1.0 / 255, input_shape=self.img_shape),
+                    Conv2D(
+                        filters=64,
+                        kernel_size=3,
+                        strides=(1, 1),
+                        padding="same",
+                        activation="ReLU",
+                    ),
+                    Conv2D(
+                        filters=64,
+                        kernel_size=3,
+                        strides=(1, 1),
+                        padding="same",
+                        activation="ReLU",
+                    ),
+                    MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="valid"),
+                    Conv2D(
+                        filters=128,
+                        kernel_size=3,
+                        strides=(1, 1),
+                        padding="same",
+                        activation="ReLU",
+                    ),
+                    Conv2D(
+                        filters=128,
+                        kernel_size=3,
+                        strides=(1, 1),
+                        padding="same",
+                        activation="ReLU",
+                    ),
+                    MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="valid"),
+                    Conv2D(
+                        filters=256,
+                        kernel_size=3,
+                        strides=(1, 1),
+                        padding="same",
+                        activation="ReLU",
+                    ),
+                    Conv2D(
+                        filters=256,
+                        kernel_size=3,
+                        strides=(1, 1),
+                        padding="same",
+                        activation="ReLU",
+                    ),
+                    Conv2D(
+                        filters=256,
+                        kernel_size=3,
+                        strides=(1, 1),
+                        padding="same",
+                        activation="ReLU",
+                    ),
+                    MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="valid"),
+                    Conv2D(
+                        filters=512,
+                        kernel_size=3,
+                        strides=(1, 1),
+                        padding="same",
+                        activation="ReLU",
+                    ),
+                    Conv2D(
+                        filters=512,
+                        kernel_size=3,
+                        strides=(1, 1),
+                        padding="same",
+                        activation="ReLU",
+                    ),
+                    Conv2D(
+                        filters=512,
+                        kernel_size=3,
+                        strides=(1, 1),
+                        padding="same",
+                        activation="ReLU",
+                    ),
+                    MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="valid"),
+                    Conv2D(
+                        filters=512,
+                        kernel_size=3,
+                        strides=(1, 1),
+                        padding="same",
+                        activation="ReLU",
+                    ),
+                    Conv2D(
+                        filters=512,
+                        kernel_size=3,
+                        strides=(1, 1),
+                        padding="same",
+                        activation="ReLU",
+                    ),
+                    Conv2D(
+                        filters=512,
+                        kernel_size=3,
+                        strides=(1, 1),
+                        padding="same",
+                        activation="ReLU",
+                    ),
+                    MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding="valid"),
+                    Flatten(),
+                    Dense(units=4096, activation="ReLU"),
+                    Dense(units=4096, activation="ReLU"),
+                    Dense(units=1, activation="sigmoid"),
+                ]
+            )
+        elif self.name == "VGG16_pretrained":
+            self.pretrained_model = VGG16(
+                include_top=False, weights="imagenet", input_shape=self.img_shape
+            )
+            self.pretrained_model.trainable = False
+            self.model = Sequential(
+                [
+                    Rescaling(1.0 / 255, input_shape=self.img_shape),
+                    self.pretrained_model,
+                    Flatten(),
+                    Dense(units=4096, activation="ReLU"),
+                    Dense(units=4096, activation="ReLU"),
+                    Dense(units=1, activation="sigmoid"),
+                ]
+            )
+        elif self.name == "ResNet50_pretrained":
+            self.pretrained_model = ResNet50(
+                include_top=False,
+                weights="imagenet",
+                input_shape=self.img_shape,
+                pooling="avg",
+            )
+            self.pretrained_model.trainable = False
+            self.model = Sequential(
+                [
+                    Rescaling(1.0 / 255, input_shape=self.img_shape),
+                    self.pretrained_model,
+                    Flatten(),
+                    Dense(units=1, activation="sigmoid"),
+                ]
+            )
+        else:
+            self.model = None
+            print("Model structure not defined!")
+
+    def compile_model(self):
         self.model.compile(
             optimizer=self.optimizer,
             loss="binary_crossentropy",
@@ -558,7 +745,7 @@ class Model(BaseClass):
         print("Test values:         ", self.y_true)
         print("Predicted values:    ", self.y_pred)
 
-    def show_metrics(self, save_folder=None):
+    def show_metrics(self, save_folder=None, postfix=None):
         _, ax = plt.subplots(2, 2, figsize=(15, 8), tight_layout=True)
         sns.lineplot(
             x=np.arange(self.epochs),
@@ -598,5 +785,5 @@ class Model(BaseClass):
         )
         RocCurveDisplay.from_predictions(self.y_true, self.y_pred, ax=ax[1, 1])
         if save_folder:
-            plt.savefig(os.path.join(save_folder, f"metrics_{self.name}.png"))
+            plt.savefig(os.path.join(save_folder, f"metrics_{self.name}_{postfix}.png"))
         plt.show()
