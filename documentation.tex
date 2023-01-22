@@ -898,7 +898,6 @@ During fine-tuning both the initial and the minimal learning rate was reduced to
 Unfortunately no improvement to the model achieved.
 
 \subsection{Pretrained ResNet50}
-
 Second pretrained model used is the ResNet50 that applies fewer filters with lower complexity.
 Shortcut connections added between sets of convolutional layers to perform identity mapping.
 
@@ -934,8 +933,11 @@ For both results (feature extraction only and fine tuning applied) the classifie
 dataset with 41\% and 45\% accuracy rates respectively.
 
 \section{Discussion} \label{sec:discussion}
-
-The results of the applied models can be seen in Table \ref{table:results_summary}.
+The results of the applied models are summarized in Table \ref{table:results_summary}.
+Two major observations present, from one side the model performance highly depends on the selected learning rate,
+and on the other side the representativeness between test and training dataset needs to be checked more in detail.
+To address these two points further tuning of the models done by applying a random search algorithm on the learning rates
+and performing resampling to assess the accuracy rates better.
 
 \begin{table}[!ht]
 	\centering
@@ -954,6 +956,88 @@ The results of the applied models can be seen in Table \ref{table:results_summar
 	\caption{Model results at optimal number of epochs}
 	\label{table:results_summary}
 \end{table}
+
+A deeper look into the test dataset reveals a possible root cause of the unrepresentativity issue.
+Figure \ref{fig:unrepr_test} shows the image that is part of the test data and shows basically the same image to be classified.
+Furthermore this particular image is not an easily understandable case for the model, it is a very specific track failure with
+very limited comparable image in the training dataset.
+A misclassification of these images could lead to a test accuracy deviation of 13.64\%.
+The test and validation accuracy is comparable only in case of the LeNet-5.
+The other models show much higher deviation between these two metrics than 13.64\%, therefore this might be not the only reason.
+
+\begin{figure}[!ht]
+	\centering
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{./data/Test/Defective/374.jpg}
+	\end{subfigure}
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{./data/Test/Defective/375.jpg}
+	\end{subfigure}
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{./data/Test/Defective/381.jpg}
+	\end{subfigure}
+	\caption{Unrepresentative samples from test dataset}
+	\label{fig:unrepr_test}
+\end{figure}
+
+\subsection{Fine tuning of learning rates}
+Initially the learning rates were manually selected and the ReduceLROnPlateau callback was applied.
+Due to the fact that the size of the validation dataset is very limited, the classification of a single image leads
+to an change of 1.6\% in terms of validation accuracy.
+In case the value of the learning rate is set to too low, several epochs need to be run to achieve a change in the
+validationa accuracy score.
+Therefore the chance that the ReduceLROnPlateau reduces further the learning rate is very high.
+To avoid this behaviour, during fine tuning constant learning rate was applied.
+To realize the random search the modul \lstinline{keras_tuner} was used.
+This allows easy hypertuning of the parameters, that is realised in \lstinline{hp_tuner.ipynb}.
+The range of learning rate was set to cover an interval one magnitude higher and one magnitude lower compared to the
+manually selected learning rate.
+The number of epochs was set to be at least as much as the optimal epoch number in the manual case and overall
+10 randomly selected values were run.
+In this way the accuracy rate of LeNet-5 and AlexNet was significantly improved, and the pretrained ResNet50 show some
+improvement, however in latter case the final result after fine-tuning of the model did not lead to any further increase
+in the validation accuracy.
+The results are presented in Table, \ref{table:results_keras_tuner}, changes shown in red.
+
+\begin{table}[!ht]
+	\centering
+	\begin{tabular}{l c c c c c}
+		\multirow{2}{*}{Model} & \multicolumn{2}{c}{Training} & \multicolumn{2}{c}{Validation} & \multirow{2}{*}{Test Accuracy}                                             \\
+		                       & Accuracy                     & Loss                           & Accuracy                       & Loss                 &                    \\
+		\hline
+		LeNet-5                & {\color{red} 60.00\%}        & {\color{red} 0.6842}           & {\color{red} 62.90\%}          & {\color{red} 0.6892} & 59\%               \\
+		AlexNet                & {\color{red} 100.00\%}       & {\color{red} 0.0039}           & {\color{red} 91.94\%}          & {\color{red} 0.5422} & {\color{red} 45\%} \\
+		VGG16                  & 90.00\%                      & 0.2541                         & 83.87\%                        & 0.5895               & 59\%               \\
+		Pretrained VGG16       & {\color{red} 99.71\%}        & {\color{red} 0.1436}           & 91.94\%                        & {\color{red} 0.3830} & {\color{red} 23\%} \\
+		Pretrained ResNet50    & {\color{red} 52.86\%}        & {\color{red} 0.6882}           & {\color{red} 74.19\%}          & {\color{red} 0.6734} & {\color{red} 45\%} \\
+		Fine-tuned ResNet50    & 75.71\%                      & 0.4569                         & 79.03\%                        & 0.5169               & 45\%               \\
+		\hline
+	\end{tabular}
+	\caption{Results after hypertuning the learning rates}
+	\label{table:results_keras_tuner}
+\end{table}
+
+In case of simpler neural networks (LeNet-5, AlexNet) the tuning of the learning rate proved to be an efficient approach.
+However in case of more deeper networks (VGG16, ResNet50) no significant improvement is achieved, except the pretrained ResNet50
+prior to finetuning of the network parameters, that is considered as an intermediate status when building a CNN model.
+The reason behind might be that a more sophisticated approach on learning rates is used during manual setup.
+An adaptive setting might result in a situation when a local minimum can be approached much closer that in case of a constant learning
+rate as the number of epochs was limited durin retraining the models with the hypertuned learning rate.
+All in all, a few bigger steps in the beginning followed by a sequential lowering of the learning rate might be a more useful approach
+for these networks.
+Due to the limited computational capacity this is not investigated further in the scope of this study.
+
+\subsection{Resampling}
+In order to achieve a reliable performance indicator in terms of accuracy, resampling is advised, in this particular case bootstrapping
+is used.
+A custom function is defined to resample the datasets including the training, validation and test dataset.
+In this way several dataset can be created and separate models can be trained for all of them.
+This allows evaluating the single models on data that is not used for training at all, and furthermore allows to increase
+the representativeness of the training data to the test data.
+Once the single models are evaluated, the final metric is derived by taking the average of the test accuracies.
 
 \section{Conclusion} \label{sec:conclusion}
 \newpage
