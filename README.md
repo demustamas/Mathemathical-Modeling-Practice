@@ -25,7 +25,8 @@ Five convolutaional neural networks built to classify the rail tracks. The appli
 Besides training the models, the learning rate is hypertuned and bootstrapping is applied for final test measure.
 
 Best performance: VGG16 with transform learning
-Major finding: All models result in random classifier for the test data
+
+Major finding: All models behave as random classifier on the test data
 
 ![Results](/tex_graphs/bootstrap_results.png)
 
@@ -52,5 +53,3 @@ The corresponding folders and files:
 - `./tex_refs/bibliography.bib`: Bibliography
 - `./tex_refs/style.sty`: Style file for $\LaTeX$
 - `./documentation.tex`: $\LaTeX$ documentation
-
-## The project is still in work.
