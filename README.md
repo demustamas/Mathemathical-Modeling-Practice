@@ -14,13 +14,13 @@ https://www.kaggle.com/datasets/salmaneunus/railway-track-fault-detection
 
 Five convolutaional neural networks built to classify the rail tracks. The applied networks and methodology are the following:
 
-| Neural network type | Methodology        | Comment                    |
-| ------------------- | ------------------ | -------------------------- |
-| LeNet-5             | pure model         |                            |
-| AlexNet             | pure model         |                            |
-| VGG16               | pure model         |                            |
-| VGG16               | transform learning |                            |
-| ResNet50            | transform learning | Dense layers: 1024, 512, 1 |
+| Neural network type | Methodology        | Comment                    | ID         |
+| ------------------- | ------------------ | -------------------------- | ---------- |
+| LeNet-5             | pure model         |                            | LeNet-5    |
+| AlexNet             | pure model         |                            | AlexNet    |
+| VGG16               | pure model         |                            | VGG16      |
+| VGG16               | transform learning |                            | VGG16_p    |
+| ResNet50            | transform learning | Dense layers: 1024, 512, 1 | ResNet50_p |
 
 Besides training the models, the learning rate is hypertuned and bootstrapping is applied for final test measure.
 
