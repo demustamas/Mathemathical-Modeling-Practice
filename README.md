@@ -33,23 +33,29 @@ Major finding: All models behave as random classifier on the test data
 ## Quickstart
 
 The data is stored in different stages of the processing in the following folders:
-- `./raw/`: Raw dataset copied from Kaggle
-- `./data/`: Cleaned dataset in standardized format (created by the scriptfiles)
-- `./augmented/`: Dataset of augmented images (created by the scriptfiles)
-- `./preprocessed/`: Images preprocessed for feeding into the neural network (created by the scriptfiles)
+- `./raw/`: Contains the raw dataset directly copied from Kaggle.
+- `./data/`: The images after data cleaning in standard format and naming. (Created by the scripts.)
+- `./augmented/`: Additional images as result of data augmentation. (Created by the scripts.)
+- `./preprocessed/`: The data after image processing, preprocessed for the machine learning
+	    algorithm, includes both the original and augmented dataset. (Created by the scripts.)
+- `./models/`: Stores the trained classification models. (Created by the scripts.)
 
 The code structure is as follows:
+- `./data_cleaning.ipynb`: Processes data from `raw` to `data` state.
+- `./data_explorer.ipynb`: Contains the data exploration steps.
+- `./classification_model_*.ipynb`: The overall CNN based classification model,
+	    where * stands for the applied network model.
+- `./playground.ipynb`: Contains the algorithms that are under development.
 - `./toolkit/classes.py`: Stores the class definitions
-- `./data_cleaning.ipynb`: Executes the raw data processing
-- `./data_explorer.ipynb`: Contains the scripts for exploring the dataset
-- `./classification_model_*.ipynb`: Invokes the construction, training and evaluation of the neural network, * stands for the network model
-- `./playground.ipynb`: Contains the scripts under development or trial
-- `./models/`: Stores saved models (created by the scripts)
+- `./hp_tuner.ipynb`: Tool used for hyperparameter tuning.
+- `./logs/`: Log files created during the training of neural networks. (Created by the scripts.)
+- `./tuner/`: Log and model files created by the hypertuner. (Created by the scripts.)
 
-The progress and results are documented in the `./documentation.tex` file, a pdf format can be found in `./build/`
+The progress and results are [documented](build/documentation.pdf) in the `./documentation.tex` file, a pdf format can be found in `./build/`
 The corresponding folders and files:
-- `./build/`: Temporary build directory for the $\LaTeX$ file, contains the pdf as default
-- `./tex_graphs/`: To store the images inserted into the $\LaTeX$ document
-- `./tex_refs/bibliography.bib`: Bibliography
-- `./tex_refs/style.sty`: Style file for $\LaTeX$
 - `./documentation.tex`: $\LaTeX$ documentation
+- `./presentation.tex`: Final presentation of the project
+- `./tex_graphs/`: To store the images inserted into the $\LaTeX$ document
+- `./tex_refs/`: Reference files for the \LaTeX documentation
+- `./build/`: Temporary build directory for the $\LaTeX$ file, contains the pdf as default
+
