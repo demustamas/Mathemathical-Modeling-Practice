@@ -8,6 +8,7 @@ import seaborn as sns
 
 import cv2 as cv
 
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.utils import image_dataset_from_directory
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import (
@@ -181,6 +182,13 @@ class BaseClass:
             for name in files:
                 os.remove(os.path.join(root, name))
 
+    @staticmethod
+    def remove_augmented_data(folder):
+        for root, _, files in os.walk(folder, topdown=False):
+            for name in files:
+                if "augmented" in name:
+                    os.remove(os.path.join(root, name))
+
 
 class ImageProcessor(BaseClass):
     def __init__(
@@ -233,7 +241,6 @@ class ImageProcessor(BaseClass):
         self.kp = []
         self.des = []
         self.imgs = [cv.imread(df_entry.img)]
-        self.defect_class = df_entry.defect_str
         self.img_path = df_entry.img
 
     def crop(self):
@@ -417,7 +424,7 @@ class Augmenter(BaseClass):
             self.flip,
             self.random_rotate,
             self.random_zoom,
-            self.random_crop,
+            # self.random_crop,
         ]
 
     @staticmethod
@@ -514,23 +521,42 @@ class Model(BaseClass):
         self.epochs = 100
         self.batch_size = 32
 
-    def load_datasets(self, color_mode="grayscale"):
+    def load_datasets(self, color_mode="grayscale", resample=False, df_images=None):
         datasets = ["Train", "Validation", "Test"]
+        if resample:
+            data_generator = ImageDataGenerator()
         for dataset in datasets:
-            self.data.update(
-                {
-                    dataset: image_dataset_from_directory(
-                        os.path.join(self.load_folder, dataset),
-                        labels="inferred",
-                        label_mode="binary",
-                        image_size=self.img_shape[:2],
-                        color_mode=color_mode,
-                        batch_size=self.batch_size,
-                        shuffle=True,
-                    )
-                }
-            )
-        self.class_names = self.data["Train"].class_names
+            if resample:
+                self.data.update(
+                    {
+                        dataset: data_generator.flow_from_dataframe(
+                            dataframe=df_images[df_images.type == dataset.lower()],
+                            x_col="img",
+                            y_col="defect_str",
+                            batch_size=self.batch_size,
+                            shuffle=True,
+                            class_mode="binary",
+                            target_size=self.img_shape[:2],
+                            color_mode=color_mode,
+                        )
+                    }
+                )
+                self.class_names = set(df_images.defect_str)
+            else:
+                self.data.update(
+                    {
+                        dataset: image_dataset_from_directory(
+                            os.path.join(self.load_folder, dataset),
+                            labels="inferred",
+                            label_mode="binary",
+                            image_size=self.img_shape[:2],
+                            color_mode=color_mode,
+                            batch_size=self.batch_size,
+                            shuffle=True,
+                        )
+                    }
+                )
+                self.class_names = self.data["Train"].class_names
 
     def build_model(self):
         if self.name == "LeNet-5":
@@ -713,6 +739,8 @@ class Model(BaseClass):
                     Rescaling(1.0 / 255, input_shape=self.img_shape),
                     self.pretrained_model,
                     Flatten(),
+                    Dense(units=1024, activation="ReLU"),
+                    Dense(units=512, activation="ReLU"),
                     Dense(units=1, activation="sigmoid"),
                 ]
             )
@@ -785,5 +813,10 @@ class Model(BaseClass):
         )
         RocCurveDisplay.from_predictions(self.y_true, self.y_pred, ax=ax[1, 1])
         if save_folder:
-            plt.savefig(os.path.join(save_folder, f"metrics_{self.name}_{postfix}.png"))
+            if postfix:
+                plt.savefig(
+                    os.path.join(save_folder, f"metrics_{self.name}_{postfix}.png")
+                )
+            else:
+                plt.savefig(os.path.join(save_folder, f"metrics_{self.name}.png"))
         plt.show()

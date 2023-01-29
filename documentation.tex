@@ -336,6 +336,7 @@ The dataset is stored in different directories related to their purpose: Train, 
 or Test dataset.
 Inside each directory the classes also splitted to separate directories: Defective or Non defective.
 The directory structure along with the number of images can be seen in Table \ref{table:dir_struct}.
+
 \begin{table}[!ht]
 	\centering
 	\begin{tabular}{l c}
@@ -352,6 +353,7 @@ The directory structure along with the number of images can be seen in Table \re
 	\caption{Dataset directory structure}
 	\label{table:dir_struct}
 \end{table}
+
 The images are taken from different perspectives, either from the top or from the side or from
 any other direction or angle.
 The photos show different track sections, that could be a close view on the single rail or
@@ -361,6 +363,7 @@ The size of the images are different ranging from very low to very high resoluti
 The dataset contains only color pictures.
 Some examples are shown in Figure \ref{fig:track_non_def} and Figure \ref{fig:track_def}.
 The total size of the dataset is 2.14 GB.
+
 \begin{figure}[!ht]
 	\centering
 	\begin{subfigure}{0.3\textwidth}
@@ -381,6 +384,7 @@ The total size of the dataset is 2.14 GB.
 	\caption{Example images of non defective track}
 	\label{fig:track_non_def}
 \end{figure}
+
 \begin{figure}[!ht]
 	\centering
 	\begin{subfigure}{0.3\textwidth}
@@ -408,6 +412,7 @@ track section.
 For this purpose image manipulation technics together with machine learning algorithms, in more detail
 neural networks applied.
 The problem formulation defines the main questions of the research to be answered:
+
 \begin{enumerate}[label=Q\arabic*]
 	\item \label{itm:Q1} What kind of defects are represented in the images?
 	\item \label{itm:Q2} Can these defects detected by applying image manipulation
@@ -424,26 +429,48 @@ be found on the following repository:
 \url{https://github.com/demustamas/Mathemathical-Modeling-Practice}
 
 The following jupyter notebooks and utilities are differentiated:
+
 \begin{enumerate}
-	\item \lstinline{data_cleaning.ipynb} Processes data from \lstinline{raw} to \lstinline{data} state.
-	\item \lstinline{data_explorer.ipynb} Contains the data exploration steps.
-	\item \lstinline{classification_model_*} The overall CNN based classification model,
+	\item \lstinline{./data_cleaning.ipynb} Processes data from \lstinline{raw} to \lstinline{data} state.
+	\item \lstinline{./data_explorer.ipynb} Contains the data exploration steps.
+	\item \lstinline{./classification_model_*} The overall CNN based classification model,
 	      where * stands for the applied network model.
-	\item \lstinline{playgorund.ipynb} Contains the algorithms that are under development.
-	\item \lstinline{toolkit/classes.py} Stores class definitions.
+	\item \lstinline{./playground.ipynb} Contains the algorithms that are under development.
+	\item \lstinline{./toolkit/classes.py} Stores class definitions.
+	\item \lstinline{./hp_tuner.ipynb} Tool used for hyperparameter tuning.
 \end{enumerate}
 
 In current research the aim was to store the different stages of the processing in different file
 folders to allow single analytics of each processing step.
 In each folder the same original structure is retained.
 Therefore the following data folders are differentiated.
+
 \begin{enumerate}
-	\item \lstinline{raw} Contains the raw dataset directly copied from Kaggle.
-	\item \lstinline{data} The images after data cleaning in standard format and naming.
-	\item \lstinline{augmented} Additional images as result of data augmentation.
-	\item \lstinline{preprocessed} The data after image processing, preprocessed for the machine learning
-	      algorithm. Includes both the original and augmented dataset.
-	\item \lstinline{models} Stores the trained classification models.
+	\item \lstinline{./raw/} Contains the raw dataset directly copied from Kaggle.
+	\item \lstinline{./data/} The images after data cleaning in standard format and naming. (Created by the scripts.)
+	\item \lstinline{./augmented/} Additional images as result of data augmentation. (Created by the scripts.)
+	\item \lstinline{./preprocessed/} The data after image processing, preprocessed for the machine learning
+	      algorithm, includes both the original and augmented dataset. (Created by the scripts.)
+	\item \lstinline{./models/} Stores the trained classification models. (Created by the scripts.)
+\end{enumerate}
+
+\noindent
+During data processing the following utility folders were used:
+
+\begin{enumerate}
+	\item \lstinline{./logs/} Log files created during the training of neural networks. (Created by the scripts.)
+	\item \lstinline{./tuner/} Log and model files created by the hypertuner. (Created by the scripts.)
+\end{enumerate}
+
+\noindent
+The project documentation covers the following files and directories:
+
+\begin{enumerate}
+	\item \lstinline{./documentation.tex} \LaTeX file of the overall documentation.
+	\item \lstinline{./presentation.tex} \LaTeX file of the presentation.
+	\item \lstinline{./tex_graphs/} Folder of the autegenerated images to include in the documentation.
+	\item \lstinline{./tex_refs/} Reference files for the \LaTeX documentation
+	\item \lstinline{./build/} Build directory for the documentation, contains the rendered pdf files. (Created by the scripts.)
 \end{enumerate}
 
 \subsection{Data cleaning}
@@ -488,26 +515,29 @@ Therefore the expectation about the achievable accuracy shall not be raised too 
 The second approach is to use a pre-trained model and apply transform learning.
 The models of VGG16 and Resnet50 are chosen as these are available in the Tensorflow
 Keras ecosystem \cite{keras_applications}.
-The models were downloaded without the dense layers on the top of the network pretrained on the Imagenet dataset.
+The models were downloaded pretrained on the Imagenet dataset without the dense layers on the top of the network.
 These layers then added to the network and trained manually on the dataset whilst keeping the core convolutional
 layers freezed (feature extraction only).
 Once the training is done, than the layers were unfreezed (except the BatchNormalization in case of the ResNet50)
 for fine-tuning the model.
-As this is becoming more and more a common was and also already studies done in this direction
+As this is becoming more and more a common way and also already studies done in this direction
 (refer to \cite{_railway_}), an acceptable accuracy range is expected, at least in the range of what is already
 achieved in different studies.
 
 The model applies Adam optimizer, EarlyStopping and ModelCheckpoint to monitor validation accuracy.
 In all cases the output layers are modified to supply binary values as we need to classify between defective and
-non defective images with a corresponding sigmoid activation function.
+non defective images with a corresponding sigmoid activation function and binary crossentropy loss function.
 
 The input images are subject to some limited image processing that covers grayscale conversion, histogram equalization,
 noise filtering and resizing to the applicable input size.
-All manipulation is than with the OpenCV module, version 4.7.0. \cite{_home_}.
+All manipulation is done with the OpenCV module, version 4.7.0. \cite{_home_}.
 
 Data augmentation was performed to increase the dataset size by taking defective and non defective images
-from the training set and applying one of the following: flipping, with a random angle between +90°and -90,
-random zoom with a ratio between 0.8 and 1.2 and random center crop with a ratio of 0.1.
+from the training set and applying one of the following: flipping, with a random angle between +90°and -90 and
+random zoom with a ratio between 0.8 and 1.2.
+Due to computational limitations the data augmentation is separated from the training of the model and done prior
+to any training step.
+This leads to a the situation that the dataset is extended with a very limited number of new samples.
 
 \subsection{Model selection and evaluation}
 Selecting the best model is based on the best validation accuracy achieved, that is monitored by the EarlyStopping
@@ -515,6 +545,7 @@ callback.
 Once the training is done, the best model weights are reloaded and the final performance estimation is done
 on the test dataset.
 For discussion the following metrics are used:
+
 \begin{enumerate}
 	\item Accuracy of the model on the training and validation dataset.
 	\item Loss function (learning curve) of the training and validation dataset.
@@ -524,7 +555,7 @@ For discussion the following metrics are used:
 
 \section{Results} \label{sec:results}
 \subsection{Data cleaning}
-The raw data from the Kaggle webpage \cite{noauthor_railway_nodate} is copied to the folder \lstinline{raw}.
+The raw data from the Kaggle webpage \cite{noauthor_railway_nodate} is copied to the folder \lstinline{./raw/}.
 This folder is not changed during the data processing, it is used as a starting point and to preserve the
 original data.
 During data cleaning three different file formats detected, namely \lstinline{webp}, \lstinline{jpeg}
@@ -533,7 +564,7 @@ The filenames show a much wider spread including random names, regular photo lab
 As Tensorflow is not able to work with \lstinline{webp} files and to maintain the same standard along
 the dataset, all files that are not in \lstinline{jpg} format are converted to \lstinline{jpg}.
 During this conversion all the files were renamed applying an integer counter.
-The modified dataset is then stored in the \lstinline{data} folder in the same structure as in the original data.
+The modified dataset is then stored in the \lstinline{./data/} folder in the same structure as in the original data.
 
 Second step is to sum all the main information of each image in a single Python DataFrame to allow easy processing.
 
@@ -541,6 +572,7 @@ Second step is to sum all the main information of each image in a single Python 
 The distribution of the image sizes are shown in Figure \ref{fig:shape_dist}.
 Please note that higher detail images can be found in the corresponding Jupyter notebook, the aim in this document
 is to explain the evaluation approach and summarize the results.
+
 \begin{figure}[!ht]
 	\centering
 	\includegraphics[width=\textwidth]{./tex_graphs/shapes.png}
@@ -560,6 +592,7 @@ downscaling but upscaling might be necessary.
 
 The distribution and correlation of the mean of the color components with respect to the images is shown on
 Figure \ref{fig:comp_pair}.
+
 \begin{figure}[!ht]
 	\centering
 	\includegraphics[width=\textwidth]{./tex_graphs/comp_pair.png}
@@ -573,6 +606,7 @@ The paired color components in both classes represent similar feature spaces.
 Out of this no clear differentiation between defective and non defective classes can be done based on the color components.
 
 During the study of the random samples, the following defects have been identified.
+
 \begin{enumerate}
 	\item Rail cracks. (Figure \ref{fig:def_cracked})
 	\item Disjoint rail connections. (Figure \ref{fig:def_disjoint})
@@ -580,6 +614,7 @@ During the study of the random samples, the following defects have been identifi
 	\item Defect fastener. (Figure \ref{fig:def_nofix})
 	\item Missing elements, e.g.: screws, springs. (Figure \ref{fig:def_missing})
 \end{enumerate}
+
 \begin{figure}[!ht]
 	\centering
 	\begin{subfigure}{0.3\textwidth}
@@ -667,17 +702,17 @@ will bear the characteristics of the rail surface.
 This is indicated on Figure \ref{fig:rail_surf_gray}.
 
 In similar cases the edge detection works quite efficiently as the rail itself bears a couple of well-defined edges.
-This makes it possible to detect line segments on the edge map which allows to detect the orientation of the rails.
+This makes it possible to detect line segments on the edge map which allows detection of the rail orientation.
 Once this is known, the image can be rotated in an angle that the longitudinal position of the rail will be
 perpendicular to the calculation direction as shown in Figure \ref{fig:rail_surf_edge}.
-This allows the easy detection of the rail edges and makes the line detection (based on the Hough probability tansform)
+This leads to the easy detection of the rail edges and makes the line detection (based on the Hough probability tansform)
 very robust as indicated with the green sections that show the longest lines detected.
 The surface detection can be improved by applying a FFT transform to the image and standardising the mean and
 standard deviation values.
 Such composition is shown on Figure \ref{fig:rail_surf_fft}.
 
 Due to the high variety of the image content (as shown in Figure \ref{fig:variety}),
-orientation and defect method none of the mentioned algorithm lead to a clear segmentation of the image.
+orientation and defect method, none of the mentioned algorithm lead to a clear segmentation of the image.
 This prevents the localization of any classification algorithm and also prevents the application of any approach that
 is mentioned in Section \ref{sec:intro}.
 To cope with the classification task we turn then to CNNs.
@@ -702,7 +737,7 @@ To cope with the classification task we turn then to CNNs.
 
 \subsection{LeNet-5} \label{sec:Lenet5}
 LeNet-5 is one of the earliest models used originally for the handwritten digit recogniton.
-It suffers from computational limitations due to the low performance of the computers at the time of being constructed,
+It suffered from computational limitations due to the low performance of the computers at the time of being constructed,
 but it defined the basic structure of a convolutional networks used afterwads.
 The structure of the neural network according to Tensorflow Keras is shown in Table \ref{table:LeNet5_struct}.
 As the input is limited to a single channel, the images were converted to grayscale followed by adaptive histogram
@@ -742,7 +777,7 @@ The resulting metrics are shown in \ref{fig:LeNet5_metrics}.
 	\label{fig:LeNet5_metrics}
 \end{figure}
 
-The accuracy increases rapidly in teh first few epochs topping at around the 10th epoch at 59.67\% on the
+The accuracy increases rapidly in the first few epochs topping at around the 10th epoch at 59.67\% on the
 validation dataset.
 Afterwards the training accuracy slightly decreases and the validation accuracy decreases as well.
 The latter is showing bigger fluctuation, mostly due to the limited number of validation data points, a single
@@ -857,7 +892,7 @@ As input image, resized color images used without any further alteration.
 \end{table}
 
 The initial learning rate is reduced to 0.00001 and the ReduceLROnPlateau patience was set to 1.
-This helped to found the local minimum only in a few starting epochs.
+This helped to find the local minimum only in a few starting epochs.
 This model required the longest training time.
 The resulting metrics can be seen on Figure \ref{fig:VGG16_metrics}.
 
@@ -869,7 +904,7 @@ The resulting metrics can be seen on Figure \ref{fig:VGG16_metrics}.
 \end{figure}
 
 The training needed much less epochs than in previous case, reaching the validation accuracy of 83.87\% at the
-64\textsuperscript{th} eopch.
+64\textsuperscript{th} epoch.
 An overfitting can be seen from the learning curve, which indicates optimal epoch number of 45, where the
 validation accuracy was 77.41\%.
 The model fitted to the test data resulting in an accuracy of 59\%, although due to long running time only a single
@@ -877,7 +912,7 @@ training is performed, therefore the assumption that the training data is not re
 can not be dropped.
 
 \subsection{Pretrained VGG16}
-In order to improve our models, pretrained models are applied.
+In order to improve our results, pretrained models are applied.
 To allow comparison on the effect of prelearned features the same VGG16 model was selected.
 An initial learning rate  is set to 0.00001 with a ReduceLROnPlateau callback set with a patience of 1 and minimal
 learning rate of 0.000001.
@@ -889,7 +924,7 @@ learning rate of 0.000001.
 	\label{fig:VGG16_pretrained_metrics}
 \end{figure}
 
-The model shows significant improvement in the performance the top accuracy of 91.93\% is reached after 6 epochs
+The model shows significant improvement in the performance, the top accuracy of 91.93\% is reached after 6 epochs
 on the validation set.
 The unrepresentativeness of the training data can be observed slightly on the learning curves after approximately
 10 epochs.
@@ -911,10 +946,10 @@ rate of 0.000005 added with ReduceLROnPlateau.
 	\label{fig:ResNet50_pretrained_metrics}
 \end{figure}
 
-The model performed fairl well reaching an accuracy rate 64.51\% on the validation set.
+The model performed fairly well reaching an accuracy rate 67.74\% on the validation set.
 The loss function of the validation set is lower than of the training set indicating that the model was fitted
 better on the validation set than to the training set.
-This might happend due to regulraization applied during training, low size of validation set, the validation set
+This might happend due to regularization applied during training, low size of validation set, the validation set
 is not representative to the training set or due to the applied data augmentation.
 In our case all of the above (except the regularization) might contribute to this effect.
 
@@ -949,8 +984,8 @@ and performing resampling to assess the accuracy rates better.
 		AlexNet                & 84.86\%                      & 0.3921                         & 87.10\%                        & 0.3749 & 36\% \\
 		VGG16                  & 90.00\%                      & 0.2541                         & 83.87\%                        & 0.5895 & 59\% \\
 		Pretrained VGG16       & 97.71\%                      & 0.1840                         & 91.94\%                        & 0.3871 & 55\% \\
-		Pretrained ResNet50    & 48.86\%                      & 0.6936                         & 64.52\%                        & 0.6836 & 41\% \\
-		Fine-tuned ResNet50    & 75.71\%                      & 0.4569                         & 79.03\%                        & 0.5169 & 45\% \\
+		Pretrained ResNet50    & 50.29\%                      & 0.7003                         & 67.74\%                        & 0.6771 & 45\% \\
+		Fine-tuned ResNet50    & 57.71\%                      & 0.6741                         & 70.97\%                        & 0.6764 & 45\% \\
 		\hline
 	\end{tabular}
 	\caption{Model results at optimal number of epochs}
@@ -988,11 +1023,11 @@ Initially the learning rates were manually selected and the ReduceLROnPlateau ca
 Due to the fact that the size of the validation dataset is very limited, the classification of a single image leads
 to an change of 1.6\% in terms of validation accuracy.
 In case the value of the learning rate is set to too low, several epochs need to be run to achieve a change in the
-validationa accuracy score.
+validation accuracy score.
 Therefore the chance that the ReduceLROnPlateau reduces further the learning rate is very high.
 To avoid this behaviour, during fine tuning constant learning rate was applied.
 To realize the random search the modul \lstinline{keras_tuner} was used.
-This allows easy hypertuning of the parameters, that is realised in \lstinline{hp_tuner.ipynb}.
+This allows easy hypertuning of the parameters, that is realised in \lstinline{./hp_tuner.ipynb}.
 The range of learning rate was set to cover an interval one magnitude higher and one magnitude lower compared to the
 manually selected learning rate.
 The number of epochs was set to be at least as much as the optimal epoch number in the manual case and overall
@@ -1005,15 +1040,15 @@ The results are presented in Table, \ref{table:results_keras_tuner}, changes sho
 \begin{table}[!ht]
 	\centering
 	\begin{tabular}{l c c c c c}
-		\multirow{2}{*}{Model} & \multicolumn{2}{c}{Training} & \multicolumn{2}{c}{Validation} & \multirow{2}{*}{Test Accuracy}                                             \\
-		                       & Accuracy                     & Loss                           & Accuracy                       & Loss                 &                    \\
+		\multirow{2}{*}{Model} & \multicolumn{2}{c}{Training} & \multicolumn{2}{c}{Validation} & \multirow{2}{*}{Test Accuracy}                                              \\
+		                       & Accuracy                     & Loss                           & Accuracy                       & Loss                  &                    \\
 		\hline
-		LeNet-5                & {\color{red} 60.00\%}        & {\color{red} 0.6842}           & {\color{red} 62.90\%}          & {\color{red} 0.6892} & 59\%               \\
-		AlexNet                & {\color{red} 100.00\%}       & {\color{red} 0.0039}           & {\color{red} 91.94\%}          & {\color{red} 0.5422} & {\color{red} 45\%} \\
-		VGG16                  & 90.00\%                      & 0.2541                         & 83.87\%                        & 0.5895               & 59\%               \\
-		Pretrained VGG16       & {\color{red} 99.71\%}        & {\color{red} 0.1436}           & 91.94\%                        & {\color{red} 0.3830} & {\color{red} 23\%} \\
-		Pretrained ResNet50    & {\color{red} 52.86\%}        & {\color{red} 0.6882}           & {\color{red} 74.19\%}          & {\color{red} 0.6734} & {\color{red} 45\%} \\
-		Fine-tuned ResNet50    & 75.71\%                      & 0.4569                         & 79.03\%                        & 0.5169               & 45\%               \\
+		LeNet-5                & {\color{red} 60.00\%}        & {\color{red} 0.6842}           & {\color{red} 62.90\%}          & {\color{red} 0.6892}  & 59\%               \\
+		AlexNet                & {\color{red} 100.00\%}       & {\color{red} 0.0039}           & {\color{red} 91.94\%}          & {\color{red} 0.5422}  & {\color{red} 45\%} \\
+		VGG16                  & 90.00\%                      & 0.2541                         & 83.87\%                        & 0.5895                & 59\%               \\
+		Pretrained VGG16       & {\color{red} 99.71\%}        & {\color{red} 0.1436}           & 91.94\%                        & {\color{red} 0.3830}  & {\color{red} 23\%} \\
+		Pretrained ResNet50    & {\color{red} 52.86\%}        & {\color{red} 0.6882}           & {\color{red} 74.19\%}          & {\color{red} 0.6734}  & 45\%               \\
+		Fine-tuned ResNet50    & {\color{red} 75.71\%}        & {\color{red} 0.4569 }          & {\color{red} 79.03\%}          & {\color{red} 0.5169 } & 45\%               \\
 		\hline
 	\end{tabular}
 	\caption{Results after hypertuning the learning rates}
@@ -1025,24 +1060,94 @@ However in case of more deeper networks (VGG16, ResNet50) no significant improve
 prior to finetuning of the network parameters, that is considered as an intermediate status when building a CNN model.
 The reason behind might be that a more sophisticated approach on learning rates is used during manual setup.
 An adaptive setting might result in a situation when a local minimum can be approached much closer that in case of a constant learning
-rate as the number of epochs was limited durin retraining the models with the hypertuned learning rate.
+rate as the number of epochs was limited during retraining the models with the hypertuned learning rate.
 All in all, a few bigger steps in the beginning followed by a sequential lowering of the learning rate might be a more useful approach
 for these networks.
 Due to the limited computational capacity this is not investigated further in the scope of this study.
 
 \subsection{Resampling}
-In order to achieve a reliable performance indicator in terms of accuracy, resampling is advised, in this particular case bootstrapping
-is used.
+In order to achieve a reliable performance indicator in terms of accuracy, resampling is advised, in this particular
+case bootstrapping is used.
 A custom function is defined to resample the datasets including the training, validation and test dataset.
+The custom function shuffles the indices of all images, including training, validation and test dataset and segments
+the resulting list to the same three groups maintaining the same number of images for each dataset type.
+Afterwards augmentation applied for 25 images from the defective and non-defective training images respectively.
+This is repeated 10 times (except for the VGG16, where only 5 iterations done due to limited computational capacity).
 In this way several dataset can be created and separate models can be trained for all of them.
 This allows evaluating the single models on data that is not used for training at all, and furthermore allows to increase
 the representativeness of the training data to the test data.
 Once the single models are evaluated, the final metric is derived by taking the average of the test accuracies.
 
+The following model states were considered for bootstrapping, the accuracy results for each dataset are shown on
+Figure \ref{fig:bootstrap_results}.
+
+\begin{enumerate}
+	\item \lstinline{LeNet-5} LeNet-5 with hypertuned learning rate
+	\item \lstinline{AlexNet} AlexNet with hypertuned learning rate
+	\item \lstinline{VGG16} VGG16 with hypertuned learning rate
+	\item \lstinline{VGG16_p} Pretrained VGG16 with hypertuned learning rate and without finetuning
+	\item \lstinline{ResNet50_p} Pretrained ResNet50 with hypertuned learning rate and without finetuning
+\end{enumerate}
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=\textwidth]{./tex_graphs/bootstrap_results.png}
+	\caption{Results of bootstrapping}
+	\label{fig:bootstrap_results}
+\end{figure}
+
+Unfortunately all model shows the same poor performance on the test dataset during bootstrapping.
+The accuracy fluctuates around 50\% that is basically a random classifier.
+There could be several reasons for this behaviour.
+Most probably there is a set of images containing information that is harder to learn by the neural network.
+Selecting only a few of this to the test dataset, that has a very limited number of images, might lead to this
+poor performance.
+
+Figure \ref{fig:bootstrap_results} allows the comparison of the trained models.
+On the training accuracy the AlexNet and VGG16 models show good performance, indicating that these are capable
+of learning the features in the training set.
+The LeNet-5 seems to be not complex enough, while poor results is obtained with the ResNet50 as well.
+Considering the model scaling described in \cite{tan_efficientnet_2020}, the number of images, number of classes
+shall be fitted to the depth, width and resolution of a CNN.
+Might be that ResNet50 is too complex for the binary classification based on this dataset size, having too much
+parameters in the convolutional layers to train.
+However in this case the pretrained model should deliver acceptable accuracy results, whilst this is not the case.
+The same behaviour is emphasized by the validation accuracy measures.
+The difference between the VGG16 models show that the pretrained model can be used as an efficient feature extractor,
+most probably increasing the dataset size would increase the accuracy of the pure VGG16 model as well.
+
 \section{Conclusion} \label{sec:conclusion}
+During the study 5 types of convolutional neural networks were built to identify defective rail tracks on the given dataset.
+The networks include the LeNet-5, AlexNet, VGG16 and ResNet50, for the latter two pure models and transform learning was applied.
+The investigation is extended by hypertuning the learning rate to find the best fit on the validation dataset and bootstrapping
+was applied to obtain reliable test accuracy measure.
+
+The results show that the AlexNet and VGG16 models achieved fairly good performance, from which the pretrained VGG16 proved to
+be the best one in terms of the validation accuracy, reaching up to an accuracy rate of 91.94\%.
+However the performance on the test dataset show that all models behave as random classifiers.
+The reason for this is most probably the limited number of images in the dataset combined with several failure cases
+(rail cracks, missing elements, etc.) that all merged into a single defective class.
+
+For further improvement several proposals can be formulated that might lead to more accurate and precise classification.
+
+\begin{enumerate}
+	\item The hypertuning of the parameters can be extended to examine the effect of the batch size, dropout and batch
+	      normalization layers, optimizer, and so on.
+	      Besides increasing the type of parameters, the iteration number of the hypertuning can be increased to cover wider
+	      or more detailed subspace of the parameters.
+	\item Data augmentation can be included in the neural network.
+	      In this way all images become augmented and therefore the dataset size can be significantly increased.
+	      Further improvement is to extended the augmentation functions with cropping, patching and so on.
+	      Image rotation can be tuned by limiting the angle of rotation to a viable range, for example only \textpm 5\textdegree
+	      to model real life camera position together with \textpm 90\textdegree for horizontal or vertical position.
+	\item Initialization of the network weights is taken as random for the current study.
+	      Implementing a more established approach might lead to better performance.
+	\item Including further models, such as VGG19 or ResNet-34.
+	\item Deeper analysis of the ResNet network, finetuning of the parameters by unfreezing only selected convolutional blocks.
+\end{enumerate}
+
 \newpage
 \listoffigures
-\newpage
 \listoftables
 \newpage
 \printbibliography
