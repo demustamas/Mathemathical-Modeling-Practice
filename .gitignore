@@ -21,3 +21,16 @@ documentation.bib.sav
 tex_refs/bibliography.bib.sav
 models/
 tuner/
+build/presentation.aux
+build/presentation.bbl
+build/presentation.bcf
+build/presentation.blg
+build/presentation.fdb_latexmk
+build/presentation.fls
+build/presentation.log
+build/presentation.nav
+build/presentation.out
+build/presentation.run.xml
+build/presentation.snm
+build/presentation.synctex.gz
+build/presentation.toc
