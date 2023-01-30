@@ -56,6 +56,6 @@ The corresponding folders and files:
 - `./documentation.tex`: $\LaTeX$ documentation
 - `./presentation.tex`: Final presentation of the project
 - `./tex_graphs/`: To store the images inserted into the $\LaTeX$ document
-- `./tex_refs/`: Reference files for the \LaTeX documentation
+- `./tex_refs/`: Reference files for the $\LaTeX$ documentation
 - `./build/`: Temporary build directory for the $\LaTeX$ file, contains the pdf as default
 

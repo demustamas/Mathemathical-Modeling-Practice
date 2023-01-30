@@ -9,6 +9,7 @@
 \begin{document}
 \maketitle
 \tableofcontents
+
 \section{Introduction} \label{sec:intro}
 Analyzing images and processing the information stored within is a key field of machine learning.
 Classification of different images, identifying and localizing different objects are basic problems.
@@ -648,6 +649,7 @@ During the study of the random samples, the following defects have been identifi
 		\label{fig:def_missing}
 	\end{subfigure}
 	\caption{Identified rail defects}
+	\label{fig:rail_defects_all}
 \end{figure}
 
 The magnitude of each defect is varying in a wide range.
@@ -1069,7 +1071,7 @@ Due to the limited computational capacity this is not investigated further in th
 In order to achieve a reliable performance indicator in terms of accuracy, resampling is advised, in this particular
 case bootstrapping is used.
 A custom function is defined to resample the datasets including the training, validation and test dataset.
-The custom function shuffles the indices of all images, including training, validation and test dataset and segments
+The custom function shuffles the indices of the images, including training, validation and test dataset and segments
 the resulting list to the same three groups maintaining the same number of images for each dataset type.
 Afterwards augmentation applied for 25 images from the defective and non-defective training images respectively.
 This is repeated 10 times (except for the VGG16, where only 5 iterations done due to limited computational capacity).
@@ -1079,7 +1081,7 @@ the representativeness of the training data to the test data.
 Once the single models are evaluated, the final metric is derived by taking the average of the test accuracies.
 
 The following model states were considered for bootstrapping, the accuracy results for each dataset are shown on
-Figure \ref{fig:bootstrap_results}.
+Figure \ref{fig:bootstrap_results} and quantified in Table \ref{table:bootstrap_results}.
 
 \begin{enumerate}
 	\item \lstinline{LeNet-5} LeNet-5 with hypertuned learning rate
@@ -1096,12 +1098,39 @@ Figure \ref{fig:bootstrap_results}.
 	\label{fig:bootstrap_results}
 \end{figure}
 
+\begin{table}[!ht]
+	\centering
+	\begin{tabular}{l c c c c c c}
+		\multirow{2}{*}{Model} & \multicolumn{2}{c}{Training} & \multicolumn{2}{c}{Validation} & \multicolumn{2}{c}{Test}                                 \\
+		                       & Mean                         & St. dev.                       & Mean                     & St. dev. & Mean    & St. dev. \\
+		\hline
+		LeNet-5                & 58.77\%                      & 6.92\%                         & 59.03\%                  & 4.38\%   & 55.00\% & 11.02\%  \\
+		AlexNet                & 95.54\%                      & 5.31\%                         & 83.87\%                  & 3.72\%   & 47.73\% & 8.09\%   \\
+		VGG16                  & 88.34\%                      & 10.35\%                        & 80.00\%                  & 5.42\%   & 50.00\% & 9.09\%   \\
+		Pretrained VGG16       & 95.23\%                      & 0.98\%                         & 97.41\%                  & 2.18\%   & 49.55\% & 11.43\%  \\
+		Pretrained ResNet50    & 57.62\%                      & 4.44\%                         & 66.61\%                  & 5.27\%   & 50.91\% & 8.78\%   \\
+		\hline
+	\end{tabular}
+	\caption{Accuracy results of bootstrapping}
+	\label{table:bootstrap_results}
+\end{table}
+
 Unfortunately all model shows the same poor performance on the test dataset during bootstrapping.
 The accuracy fluctuates around 50\% that is basically a random classifier.
 There could be several reasons for this behaviour.
-Most probably there is a set of images containing information that is harder to learn by the neural network.
-Selecting only a few of this to the test dataset, that has a very limited number of images, might lead to this
-poor performance.
+When the network is trained, the weights are optimized considering the loss function on the training data.
+In this step the network learns the training set, therefore it is expected to reach high accuracy on the training data.
+Then we select the model with highest validation accuracy, meaning we introduce an \emph{artifical} learning on the
+validation set.
+This links the weights to the information stored in the validation images.
+Taking a look into the different metrics depcited on the Figures \ref{fig:LeNet5_metrics}, \ref{fig:AlexNet_metrics},
+\ref{fig:VGG16_metrics}, \ref{fig:VGG16_pretrained_metrics}, \ref{fig:ResNet50_pretrained_metrics} or \ref{fig:ResNet50_finetuned_metrics},
+it can be observed that the validation accuracy (and in some cases even the validation loss) vary greatly just
+in a few consecutive epochs.
+Selecting the maximum from these model instances is introducing a certain distortion to the results.
+Even in this case one would expect that the test dataset (especially in case of bootstrapping) shall vary around the same
+mean value, however this is not the case.
+Further analyzis shall be done to understand this behavior as proposals given in Section \ref{sec:conclusion}.
 
 Figure \ref{fig:bootstrap_results} allows the comparison of the trained models.
 On the training accuracy the AlexNet and VGG16 models show good performance, indicating that these are capable
@@ -1123,10 +1152,34 @@ The investigation is extended by hypertuning the learning rate to find the best 
 was applied to obtain reliable test accuracy measure.
 
 The results show that the AlexNet and VGG16 models achieved fairly good performance, from which the pretrained VGG16 proved to
-be the best one in terms of the validation accuracy, reaching up to an accuracy rate of 91.94\%.
+be the best one in terms of the validation accuracy, reaching up to an accuracy rate of 97.41\% on average.
 However the performance on the test dataset show that all models behave as random classifiers.
 The reason for this is most probably the limited number of images in the dataset combined with several failure cases
 (rail cracks, missing elements, etc.) that all merged into a single defective class.
+
+Revisiting our problem statement described in Section \ref{sec:prob_stat}, the following answers can be given.
+
+\begin{enumerate}
+	\item[\ref{itm:Q1}] What kind of defects are represented in the images?
+
+	      The images represent a high variety of defects in terms of type (rail crack, surface pitting, missing elements, etc.) as
+	      shown in Figure \ref{fig:rail_defects_all} and in terms of magnitude (from small defects up to major track failures).
+	\item[\ref{itm:Q2}] Can these defects detected by applying image manipulation and machine learning approach?
+
+	      Image manipulation is useful in cases when a fixed camera setup is given.
+	      Current dataset contains images taken from different perspectives, angles and distances, in some cases a close view
+	      on a rail surface is goven, in other cases a full track is captured.
+	      In this view image processing is limited to grayscale conversion and resizing to the correct input size and color mode
+	      of the particular neural network.
+	      In terms of machine learning approach, the convolutional neural networks show a certain solution to the given problem.
+	      The AlexNet and VGG16 successfully learns the training set and provides fairly good results on the validation dataset,
+	      however all attempts fail to reliably predict on the test dataset.
+	\item[\ref{itm:Q3}] What accuracy rate can be achieved with the algorithm?
+
+	      Manually trained network results a represented in Table \ref{table:results_keras_tuner}, furthermore the consistency
+	      of each model is depicted on the bootstrapping results in Figure \ref{fig:bootstrap_results}.
+
+\end{enumerate}
 
 For further improvement several proposals can be formulated that might lead to more accurate and precise classification.
 
