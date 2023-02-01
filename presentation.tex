@@ -2,6 +2,7 @@
 \usepackage{./tex_refs/style_pres}
 
 \useoutertheme{infolines}
+\setbeamertemplate{navigation symbols}{}
 
 \title{Railway Track Fault Detection}
 \subtitle{Mathemathical Modeling Practice}
@@ -33,6 +34,7 @@
                 Defective
             \end{columns}
         \end{exampleblock}
+        \pause
         \column{.45\textwidth}
         \begin{block}{}
             \begin{table}[!ht]
@@ -44,6 +46,7 @@
                     Test         & 2x11             \\
                 \end{tabular}
             \end{table}
+            \pause
             \begin{enumerate}[label=Q\arabic*]
                 \item \label{itm:Q1} What kind of defects are represented in the images?
                 \item \label{itm:Q2} Can these defects detected by applying image manipulation
@@ -124,6 +127,7 @@
         \begin{block}{LeNet-5}
             \includegraphics[width=\textwidth]{./tex_graphs/metrics_LeNet-5}
         \end{block}
+        \pause
         \column{0.45\textwidth}
         \begin{block}{AlexNet}
             \includegraphics[width=\textwidth]{./tex_graphs/metrics_AlexNet}
@@ -136,6 +140,7 @@
         \begin{block}{VGG16}
             \includegraphics[width=\textwidth]{./tex_graphs/metrics_VGG16}
         \end{block}
+        \pause
         \column{0.45\textwidth}
         \begin{block}{Pretrained VGG16}
             \includegraphics[width=\textwidth]{./tex_graphs/metrics_VGG16_pretrained.png}
@@ -148,6 +153,7 @@
         \begin{block}{Pretrained ResNet50}
             \includegraphics[width=\textwidth]{./tex_graphs/metrics_ResNet50_pretrained}
         \end{block}
+        \pause
         \column{0.45\textwidth}
         \begin{block}{Fine-tuned ResNet50}
             \includegraphics[width=\textwidth]{./tex_graphs/metrics_ResNet50_pretrained_finetuned.png}
@@ -165,13 +171,15 @@
                 \item RandomSearch on Learning Rate
             \end{itemize}
         \end{block}
+        \pause
         \column{0.45\textwidth}
         \begin{block}{Bootstrapping}
             \begin{itemize}
-                \item Mitigate representativeness issue
+                \item Mitigate test dataset representativity
                 \item 10 iterations with best LR
             \end{itemize}
         \end{block}
+        \pause
     \end{columns}
     \centering
     \includegraphics[height=5.5cm]{./tex_graphs/bootstrap_results.png}
@@ -183,9 +191,13 @@
         \column{0.45\textwidth}
         \begin{block}{Conclusion}
             \begin{itemize}
-                \item
+                \item AlexNet and VGG learned the training and validation sets
+                \item No generalization of the model to the test dataset
+                \item Possible overfitting on training and validation data
+                \item Test dataset representativeness
             \end{itemize}
         \end{block}
+        \pause
         \column{0.45\textwidth}
         \begin{block}{Further steps}
             \begin{itemize}
